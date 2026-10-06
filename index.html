@@ -1,32 +1,1081 @@
-
 <!DOCTYPE html>
 <html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BarriereFrei - Zugängliche Navigation</title>
-    <meta name="description" content="Community-basierte barrierefreie Navigation und Routenplanung" />
-    <meta name="author" content="BarriereFrei" />
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapForAll - Barrierefreie Navigation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
 
-    <meta property="og:title" content="BarriereFrei - Zugängliche Navigation" />
-    <meta property="og:description" content="Community-basierte barrierefreie Navigation und Routenplanung" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+        .search-container {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            z-index: 1000;
+        }
 
-  <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+        .search-box {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            padding: 8px 0;
+        }
+
+        .action-buttons {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .action-button {
+            background: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-button:hover {
+            background: #f8f9fa;
+        }
+
+        .action-button.primary {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .action-button.primary:hover {
+            background: #1557b0;
+        }
+
+        .action-button.secondary {
+            background: #f8f9fa;
+            color: #3c4043;
+            border: 1px solid #dadce0;
+        }
+
+        .action-button.secondary:hover {
+            background: #f1f3f4;
+        }
+
+        .sidebar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-content {
+            padding: 16px;
+            overflow-y: auto;
+            height: calc(100vh - 60px);
+        }
+
+        .location-item {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .location-item:hover {
+            background: #f8f9fa;
+        }
+
+        .location-item h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .location-item p {
+            margin: 4px 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .status-badge.accessible {
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        .status-badge.unknown {
+            background: #fef7e0;
+            color: #b06000;
+        }
+
+        .status-badge.issue {
+            background: #fce8e6;
+            color: #c5221f;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-body {
+            padding: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            border-color: #1a73e8;
+            outline: none;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #1557b0;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #3c4043;
+            border: 1px solid #dadce0;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f3f4;
+        }
+
+        .accessibility-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .accessibility-button {
+            background: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .accessibility-button:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 640px) {
+            .search-container {
+                top: 10px;
+                width: calc(100% - 20px);
+            }
+
+            .action-buttons {
+                top: 10px;
+                right: 10px;
+            }
+
+            .sidebar {
+                max-width: 100%;
+            }
+        }
+
+        body.large-text {
+            font-size: 1.3em;
+        }
+        body.high-contrast {
+            filter: contrast(1.5) grayscale(0.2);
+            background: #000 !important;
+            color: #fff !important;
+        }
+        body.colorblind-protanopia {
+            filter: url('#protanopia');
+        }
+        body.colorblind-deuteranopia {
+            filter: url('#deuteranopia');
+        }
+        body.colorblind {
+            /* legacy, wird nicht mehr genutzt */
+        }
+        body.darkmode {
+            background: #181818 !important;
+            color: #e0e0e0 !important;
+        }
+        body.darkmode .sidebar,
+        body.darkmode .modal-content,
+        body.darkmode .search-box {
+            background: #232323 !important;
+            color: #e0e0e0 !important;
+        }
+        body.darkmode .action-button,
+        body.darkmode .accessibility-button {
+            background: #232323 !important;
+            color: #e0e0e0 !important;
+        }
+        body.darkmode .action-button.primary {
+            background: #333 !important;
+            color: #fff !important;
+        }
+        /* SVG Filter für Farbschwäche */
+        svg#colorblind-filter-defs {
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- Search Box -->
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search text-gray-400"></i>
+            <input type="text" class="search-input" placeholder="Ort suchen oder Adresse eingeben">
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button class="action-button" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <button class="action-button" id="locate-me">
+            <i class="fas fa-location-arrow"></i>
+        </button>
+        <button class="action-button primary" id="report-button">
+            <i class="fas fa-plus"></i>
+        </button>
+        <button class="action-button" id="profile-button">
+            <i class="fas fa-user"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="text-lg font-semibold">Barrierefreie Orte</h2>
+            <button class="action-button" id="close-sidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-content" id="locations-list">
+            <!-- Locations will be added here dynamically -->
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div class="modal" id="report-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="text-lg font-semibold">Barriere melden</h2>
+                <button class="action-button" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="report-form">
+                    <div class="form-group">
+                        <label>Ort</label>
+                        <input type="text" class="form-control" name="location" placeholder="Wo befindet sich die Barriere?" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Art der Barriere</label>
+                        <select class="form-control" name="barrierType" required>
+                            <option value="">Art der Barriere auswählen</option>
+                            <option value="stairs">Stufen oder Treppen ohne Rampe</option>
+                            <option value="narrow">Zu enger Durchgang</option>
+                            <option value="doors">Keine automatischen Türen</option>
+                            <option value="surface">Unebener Bodenbelag</option>
+                            <option value="other">Andere</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Beschreibung</label>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Weitere Details..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Foto hinzufügen (optional)</label>
+                        <input type="file" id="photo-input" accept="image/*" class="hidden">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer" id="photo-upload">
+                            <i class="fas fa-camera text-2xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-500 text-sm">Zum Hinzufügen tippen</p>
+                        </div>
+                        <div id="photo-preview" class="hidden mt-2">
+                            <img src="" alt="Vorschau" class="max-w-full h-32 object-cover rounded-lg">
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-4">
+                        <button type="button" class="btn btn-secondary" id="cancel-report">Abbrechen</button>
+                        <button type="submit" class="btn btn-primary">Meldung absenden</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal" id="profile-modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="text-lg font-semibold">Mein Profil</h2>
+                <button class="action-button" id="close-profile-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; align-items: center;">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profilbild" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 16px;">
+                <h2 style="font-size: 2rem; font-weight: bold; margin-bottom: 8px;">Amjad Mustermann</h2>
+                <div style="margin-bottom: 16px;">
+                    <span style="background: #e3f0ff; color: #2563eb; padding: 4px 12px; border-radius: 999px; font-size: 0.95em; margin-right: 6px;">Erkunder 🗺️</span>
+                    <span style="background: #e6fbe8; color: #22c55e; padding: 4px 12px; border-radius: 999px; font-size: 0.95em; margin-right: 6px;">Bewertet ⭐</span>
+                    <span style="background: #fff7e6; color: #f59e42; padding: 4px 12px; border-radius: 999px; font-size: 0.95em;">Helfer 🤝</span>
+                </div>
+                <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+                    <div style="background: #f8fafc; border-radius: 12px; padding: 16px 32px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: #2563eb;">12</div>
+                        <div style="font-size: 1em; color: #64748b;">Gemeldete Hindernisse</div>
+                    </div>
+                    <div style="background: #f8fafc; border-radius: 12px; padding: 16px 32px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: #22c55e;">8</div>
+                        <div style="font-size: 1em; color: #64748b;">Abgegebene Bewertungen</div>
+                    </div>
+                </div>
+                <div style="width: 100%; max-width: 350px;">
+                    <div style="font-weight: 500; margin-bottom: 8px;">Neueste Aktivität</div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span style="background: #fee2e2; color: #ef4444; padding: 2px 10px; border-radius: 8px; font-size: 0.95em;">Hindernis</span>
+                        <span>Defekter Aufzug an der Hauptstraße gemeldet</span>
+                        <span style="color: #64748b; font-size: 0.9em; margin-left: auto;">Vor 2 Tagen</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="background: #d1fae5; color: #22c55e; padding: 2px 10px; border-radius: 8px; font-size: 0.95em;">Bewertung</span>
+                        <span>Jahrhunderthalle Bochum bewertet</span>
+                        <span style="color: #64748b; font-size: 0.9em; margin-left: auto;">Vor 1 Woche</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accessibility Controls -->
+    <div class="accessibility-controls">
+        <button class="accessibility-button" id="high-contrast-toggle">
+            <i class="fas fa-adjust"></i>
+            <span>Hoher Kontrast</span>
+        </button>
+        <button class="accessibility-button" id="large-text-toggle">
+            <i class="fas fa-text-height"></i>
+            <span>Große Schrift</span>
+        </button>
+        <button class="accessibility-button" id="tts-toggle">
+            <i class="fas fa-volume-up"></i>
+            <span>Vorlesen</span>
+        </button>
+        <button class="accessibility-button" id="colorblind-toggle">
+            <i class="fas fa-eye"></i>
+            <span>Farbschwäche</span>
+        </button>
+        <button class="accessibility-button" id="darkmode-toggle">
+            <i class="fas fa-moon"></i>
+            <span>Nachtmodus</span>
+        </button>
+    </div>
+
+    <!-- SVG Filter für Farbschwäche: Protanopie & Deuteranopie -->
+    <svg id="colorblind-filter-defs" style="position:absolute;width:0;height:0;">
+      <filter id="protanopia">
+        <feColorMatrix type="matrix" values="0.567 0.433 0 0 0 0.558 0.442 0 0 0 0 0.242 0.758 0 0 0 0 0 1 0" />
+      </filter>
+      <filter id="deuteranopia">
+        <feColorMatrix type="matrix" values="0.625 0.375 0 0 0 0.7 0.3 0 0 0 0 0.3 0.7 0 0 0 0 0 1 0" />
+      </filter>
+    </svg>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <!-- Leaflet Routing Machine -->
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <!-- Leaflet Locate Control -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.1/dist/L.Control.Locate.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.1/dist/L.Control.Locate.min.css" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize map
+            const map = L.map('map').setView([51.1657, 10.4515], 6);
+            
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> Mitwirkende'
+            }).addTo(map);
+
+            // --- GEOJSON BAUSTELLEN LADEN UND ANZEIGEN ---
+            fetch('baustellen.geojson')
+                .then(response => response.json())
+                .then(geojson => {
+                    L.geoJSON(geojson, {
+                        pointToLayer: function(feature, latlng) {
+                            return L.marker(latlng, {
+                                icon: L.divIcon({
+                                    className: 'custom-marker',
+                                    html: `<div style="background:#EA4335;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"><i class='fas fa-road'></i></div>`,
+                                    iconSize: [32, 32],
+                                    iconAnchor: [16, 16]
+                                })
+                            });
+                        },
+                        onEachFeature: function(feature, layer) {
+                            const p = feature.properties;
+                            let html = `<div style='padding:8px;'>`;
+                            html += `<h3 style='margin:0 0 8px;font-weight:600;'>${p.name || 'Baustelle'}</h3>`;
+                            if (p.status) html += `<div><b>Status:</b> ${p.status}</div>`;
+                            if (p.duration) html += `<div><b>Dauer:</b> ${p.duration}</div>`;
+                            if (p.work) html += `<div><b>Arbeiten:</b> ${p.work}</div>`;
+                            if (p.contractor) html += `<div><b>Auftragnehmer:</b> ${p.contractor}</div>`;
+                            html += `</div>`;
+                            layer.bindPopup(html);
+                        }
+                    }).addTo(map);
+                });
+
+            // Sample data for accessible locations
+            const locations = [
+                {
+                    name: "Hauptbahnhof Dortmund",
+                    lat: 51.5176,
+                    lng: 7.4593,
+                    type: "accessible",
+                    description: "Hauptbahnhof mit Aufzügen und barrierefreien Einrichtungen.",
+                    features: ["wheelchair", "auto-doors", "elevators"]
+                },
+                {
+                    name: "Hauptbahnhof Bochum",
+                    lat: 51.4783,
+                    lng: 7.2228,
+                    type: "accessible",
+                    description: "Bahnhof mit Rollstuhlzugang und automatischen Türen.",
+                    features: ["wheelchair", "auto-doors"]
+                },
+                {
+                    name: "Hochschule Bochum",
+                    lat: 51.4537,
+                    lng: 7.2507,
+                    type: "accessible",
+                    description: "Hauptgebäude mit barrierefreien Eingängen und Aufzügen.",
+                    features: ["wheelchair", "no-steps", "elevators"]
+                },
+                {
+                    name: "Ruhr Universität Bochum",
+                    lat: 51.4465,
+                    lng: 7.2628,
+                    type: "accessible",
+                    description: "Universitätsbibliothek mit Rollstuhlzugang und automatischen Türen.",
+                    features: ["wheelchair", "auto-doors", "elevators"]
+                },
+                {
+                    name: "Dortmunder U-Turm",
+                    lat: 51.5149,
+                    lng: 7.4638,
+                    type: "issue",
+                    description: "Einige Bereiche haben Stufen ohne alternative Zugänge.",
+                    features: []
+                }
+            ];
+
+            // LocalStorage Meldungen laden
+            function loadLocalReports() {
+                const localReports = JSON.parse(localStorage.getItem('localReports') || '[]');
+                localReports.forEach(report => {
+                    locations.push(report);
+                });
+            }
+            loadLocalReports();
+
+            // Create custom icons
+            const createIcon = (type) => {
+                const colors = {
+                    accessible: '#34A853',
+                    unknown: '#FBBC05',
+                    issue: '#EA4335'
+                };
+                
+                return L.divIcon({
+                    className: 'custom-marker',
+                    html: `<div style="
+                        background-color: ${colors[type]};
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 50%;
+                        border: 2px solid white;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-size: 14px;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    ">
+                        <i class="fas fa-${type === 'accessible' ? 'check' : type === 'unknown' ? 'question' : 'exclamation'}"></i>
+                    </div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16]
+                });
+            };
+
+            // Add markers to map
+            const markers = locations.map(location => {
+                const marker = L.marker([location.lat, location.lng], {
+                    icon: createIcon(location.type)
+                }).addTo(map);
+
+                marker.bindPopup(`
+                    <div style="padding: 8px;">
+                        <h3 style="margin: 0 0 8px; font-weight: 600;">${location.name}</h3>
+                        <p style="margin: 0 0 8px; color: #666;">${location.description}</p>
+                        <div style="display: flex; gap: 4px;">
+                            ${location.features.map(feature => `
+                                <span style="
+                                    background: #f1f3f4;
+                                    padding: 4px 8px;
+                                    border-radius: 12px;
+                                    font-size: 12px;
+                                ">${feature}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                `);
+
+                return { marker, data: location };
+            });
+
+            // Update locations list in sidebar
+            function updateLocationsList() {
+                const locationsList = document.getElementById('locations-list');
+                locationsList.innerHTML = locations.map(location => `
+                    <div class="location-item" data-lat="${location.lat}" data-lng="${location.lng}">
+                        <h3>${location.name}</h3>
+                        <p>${location.description}</p>
+                        <div class="status-badge ${location.type}">
+                            ${location.type === 'accessible' ? 'Barrierefrei' : 
+                              location.type === 'unknown' ? 'Status unbekannt' : 
+                              'Barrieren vorhanden'}
+                        </div>
+                    </div>
+                `).join('');
+
+                // Add click handlers
+                document.querySelectorAll('.location-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const lat = parseFloat(item.dataset.lat);
+                        const lng = parseFloat(item.dataset.lng);
+                        map.setView([lat, lng], 16);
+                        document.getElementById('sidebar').classList.remove('open');
+                    });
+                });
+            }
+
+            // Initialize locations list
+            updateLocationsList();
+
+            // Toggle sidebar
+            document.getElementById('menu-toggle').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.add('open');
+            });
+
+            document.getElementById('close-sidebar').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.remove('open');
+            });
+
+            // Variable für aktuellen Standort
+            let currentReportLat = 51.1657; // Default Deutschland
+            let currentReportLng = 10.4515;
+
+            // Toggle report modal
+            document.getElementById('report-button').addEventListener('click', () => {
+                // Beim Öffnen Standort ermitteln
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        currentReportLat = position.coords.latitude;
+                        currentReportLng = position.coords.longitude;
+                        // Optional: Feld im Formular automatisch ausfüllen
+                        document.querySelector('input[name="location"]').value = `Standort: ${currentReportLat.toFixed(5)}, ${currentReportLng.toFixed(5)}`;
+                    }, function() {
+                        // Falls abgelehnt, bleibt Default
+                        document.querySelector('input[name="location"]').value = '';
+                    });
+                } else {
+                    document.querySelector('input[name="location"]').value = '';
+                }
+                document.getElementById('report-modal').classList.add('open');
+            });
+
+            document.getElementById('close-modal').addEventListener('click', () => {
+                document.getElementById('report-modal').classList.remove('open');
+            });
+
+            document.getElementById('cancel-report').addEventListener('click', () => {
+                document.getElementById('report-modal').classList.remove('open');
+            });
+
+            // Close modals when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('open');
+                    }
+                });
+            });
+
+            // Add locate control
+            const lc = L.control.locate({
+                position: 'topleft',
+                strings: {
+                    title: "Meinen Standort anzeigen"
+                },
+                locateOptions: {
+                    maxZoom: 16,
+                    enableHighAccuracy: true
+                }
+            }).addTo(map);
+
+            // Locate me button
+            document.getElementById('locate-me').addEventListener('click', () => {
+                lc.start();
+            });
+
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+
+// Photon Autocomplete
+const suggestionBox = document.createElement('div');
+suggestionBox.style.position = 'absolute';
+suggestionBox.style.top = '80px';
+suggestionBox.style.left = '50%';
+suggestionBox.style.transform = 'translateX(-50%)';
+suggestionBox.style.width = '90%';
+suggestionBox.style.maxWidth = '600px';
+suggestionBox.style.zIndex = '1100';
+suggestionBox.style.background = 'white';
+suggestionBox.style.border = '1px solid #ccc';
+suggestionBox.style.borderTop = 'none';
+suggestionBox.style.maxHeight = '200px';
+suggestionBox.style.overflowY = 'auto';
+suggestionBox.style.display = 'none';
+suggestionBox.classList.add('rounded-b-lg', 'shadow-lg');
+document.body.appendChild(suggestionBox);
+
+let lastSearchTime = 0;
+searchInput.addEventListener('input', async () => {
+    const now = Date.now();
+    if (now - lastSearchTime < 1000) return;
+    lastSearchTime = now;
+    const query = searchInput.value.trim();
+    if (query.length < 2) {
+        suggestionBox.style.display = 'none';
+        return;
+    }
+    const response = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=5&lang=de`);
+    const data = await response.json();
+
+    suggestionBox.innerHTML = '';
+    data.features.forEach(feature => {
+        const name = feature.properties.name;
+        const city = feature.properties.city || '';
+        const country = feature.properties.country || '';
+        const lat = feature.geometry.coordinates[1];
+        const lng = feature.geometry.coordinates[0];
+
+        const item = document.createElement('div');
+        item.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm';
+        item.textContent = `${name}${city ? ', ' + city : ''}${country ? ', ' + country : ''}`;
+        item.addEventListener('click', () => {
+            // Karte auf den Ort zoomen
+            map.setView([lat, lng], 16);
+            suggestionBox.style.display = 'none';
+            searchInput.value = item.textContent;
+        });
+        suggestionBox.appendChild(item);
+    });
+    suggestionBox.style.display = 'block';
+});
+
+document.addEventListener('click', (e) => {
+    if (!suggestionBox.contains(e.target) && e.target !== searchInput) {
+        suggestionBox.style.display = 'none';
+    }
+});
+
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    const foundLocation = locations.find(loc => 
+                        loc.name.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    if (foundLocation) {
+                        map.setView([foundLocation.lat, foundLocation.lng], 16);
+                    } else {
+                        alert('Ort nicht gefunden. Versuchen Sie "Dortmund", "Bochum", "Hochschule Bochum" oder "Ruhr Universität Bochum"');
+                    }
+                }
+            });
+
+            // Accessibility toggles
+            document.getElementById('high-contrast-toggle').addEventListener('click', function() {
+                document.body.classList.toggle('high-contrast');
+                localStorage.setItem('highContrast', document.body.classList.contains('high-contrast'));
+            });
+
+            document.getElementById('large-text-toggle').addEventListener('click', function() {
+                document.body.classList.toggle('large-text');
+                localStorage.setItem('largeText', document.body.classList.contains('large-text'));
+            });
+
+            // Text-to-Speech (Vorlesen)
+            let ttsActive = false;
+            let ttsUtterance;
+            document.getElementById('tts-toggle').addEventListener('click', function() {
+                if (!ttsActive) {
+                    const text = document.body.innerText;
+                    ttsUtterance = new SpeechSynthesisUtterance(text);
+                    window.speechSynthesis.speak(ttsUtterance);
+                    ttsActive = true;
+                    this.querySelector('span').innerText = 'Vorlesen stoppen';
+                } else {
+                    window.speechSynthesis.cancel();
+                    ttsActive = false;
+                    this.querySelector('span').innerText = 'Vorlesen';
+                }
+            });
+
+            // Colorblind Mode
+            document.getElementById('colorblind-toggle').addEventListener('click', function() {
+                // Status auslesen
+                let mode = document.body.getAttribute('data-colorblind-mode') || 'none';
+                if (mode === 'none') {
+                    document.body.classList.remove('colorblind-deuteranopia');
+                    document.body.classList.add('colorblind-protanopia');
+                    document.body.setAttribute('data-colorblind-mode', 'protanopia');
+                    localStorage.setItem('colorblindMode', 'protanopia');
+                    this.querySelector('span').innerText = 'Protanopie';
+                } else if (mode === 'protanopia') {
+                    document.body.classList.remove('colorblind-protanopia');
+                    document.body.classList.add('colorblind-deuteranopia');
+                    document.body.setAttribute('data-colorblind-mode', 'deuteranopia');
+                    localStorage.setItem('colorblindMode', 'deuteranopia');
+                    this.querySelector('span').innerText = 'Deuteranopie';
+                } else {
+                    document.body.classList.remove('colorblind-protanopia', 'colorblind-deuteranopia');
+                    document.body.setAttribute('data-colorblind-mode', 'none');
+                    localStorage.setItem('colorblindMode', 'none');
+                    this.querySelector('span').innerText = 'Farbschwäche';
+                }
+            });
+
+            // Beim Laden gespeicherten Modus anwenden
+            const savedColorblind = localStorage.getItem('colorblindMode') || 'none';
+            if (savedColorblind === 'protanopia') {
+                document.body.classList.add('colorblind-protanopia');
+                document.body.setAttribute('data-colorblind-mode', 'protanopia');
+                document.getElementById('colorblind-toggle').querySelector('span').innerText = 'Protanopie';
+            } else if (savedColorblind === 'deuteranopia') {
+                document.body.classList.add('colorblind-deuteranopia');
+                document.body.setAttribute('data-colorblind-mode', 'deuteranopia');
+                document.getElementById('colorblind-toggle').querySelector('span').innerText = 'Deuteranopie';
+            } else {
+                document.body.setAttribute('data-colorblind-mode', 'none');
+                document.getElementById('colorblind-toggle').querySelector('span').innerText = 'Farbschwäche';
+            }
+
+            // Darkmode
+            document.getElementById('darkmode-toggle').addEventListener('click', function() {
+                document.body.classList.toggle('darkmode');
+                localStorage.setItem('darkmode', document.body.classList.contains('darkmode'));
+            });
+
+            // Load saved preferences
+            if (localStorage.getItem('highContrast') === 'true') {
+                document.body.classList.add('high-contrast');
+            }
+            if (localStorage.getItem('largeText') === 'true') {
+                document.body.classList.add('large-text');
+            }
+            if (localStorage.getItem('colorblind') === 'true') {
+                document.body.classList.add('colorblind');
+            }
+            if (localStorage.getItem('darkmode') === 'true') {
+                document.body.classList.add('darkmode');
+            }
+
+            // Report form handling
+            const reportForm = document.getElementById('report-form');
+            const photoInput = document.getElementById('photo-input');
+            const photoUpload = document.getElementById('photo-upload');
+            const photoPreview = document.getElementById('photo-preview');
+            const photoPreviewImg = photoPreview.querySelector('img');
+
+            // Handle photo upload
+            photoUpload.addEventListener('click', () => {
+                photoInput.click();
+            });
+
+            photoInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        photoPreviewImg.src = e.target.result;
+                        photoPreview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Handle form submission
+            reportForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(reportForm);
+                const reportData = {
+                    name: formData.get('location'),
+                    lat: currentReportLat,
+                    lng: currentReportLng,
+                    type: 'issue',
+                    description: formData.get('description'),
+                    features: [formData.get('barrierType')],
+                    photo: photoPreviewImg.src || null,
+                    createdAt: new Date().toISOString()
+                };
+
+                // Im LocalStorage speichern
+                const localReports = JSON.parse(localStorage.getItem('localReports') || '[]');
+                localReports.push(reportData);
+                localStorage.setItem('localReports', JSON.stringify(localReports));
+
+                // Marker auf Karte hinzufügen
+                const marker = L.marker([reportData.lat, reportData.lng], {
+                    icon: createIcon('issue')
+                }).addTo(map);
+                marker.bindPopup(`
+                    <div style="padding: 8px;">
+                        <h3 style="margin: 0 0 8px; font-weight: 600;">${reportData.name}</h3>
+                        <p style="margin: 0 0 8px; color: #666;">${reportData.description}</p>
+                        <div style="display: flex; gap: 4px;">
+                            <span style="background: #f1f3f4; padding: 4px 8px; border-radius: 12px; font-size: 12px;">${formData.get('barrierType')}</span>
+                        </div>
+                        ${reportData.photo ? `<img src="${reportData.photo}" alt="Foto" style="max-width:100%;margin-top:8px;border-radius:8px;">` : ''}
+                    </div>
+                `);
+
+                // In locations-Array aufnehmen und Liste aktualisieren
+                locations.push(reportData);
+                updateLocationsList();
+
+                // Erfolgsmeldung
+                alert('Meldung lokal gespeichert!');
+                reportForm.reset();
+                photoPreview.classList.add('hidden');
+                document.getElementById('report-modal').classList.remove('open');
+            });
+
+            // Profile Modal öffnen/schließen
+            document.getElementById('profile-button').addEventListener('click', function() {
+                document.getElementById('profile-modal').classList.add('open');
+            });
+            document.getElementById('close-profile-modal').addEventListener('click', function() {
+                document.getElementById('profile-modal').classList.remove('open');
+            });
+
+            // Routing-Variablen und -Funktionen auskommentiert
+            let routeStart = null;
+            let routeZiel = null;
+
+            // Hilfsfunktion: Kreis um Punkt als Polygon (GeoJSON) erzeugen
+            function createCirclePolygon(lng, lat, radiusMeters = 30, points = 16) {
+                const coords = [];
+                for (let i = 0; i < points; i++) {
+                    const angle = (i / points) * 2 * Math.PI;
+                    const dx = radiusMeters * Math.cos(angle);
+                    const dy = radiusMeters * Math.sin(angle);
+                    const deltaLng = dx / (111320 * Math.cos(lat * Math.PI / 180));
+                    const deltaLat = dy / 110540;
+                    coords.push([lng + deltaLng, lat + deltaLat]);
+                }
+                coords.push(coords[0]);
+                return coords;
+            }
+
+            async function routeWithAvoidPolygons(start, ziel, baustellenGeojson) {
+                const polygons = baustellenGeojson.features.map(f =>
+                    [createCirclePolygon(f.geometry.coordinates[0], f.geometry.coordinates[1])]
+                );
+                const avoidGeojson = {
+                    type: "MultiPolygon",
+                    coordinates: polygons
+                };
+                const response = await fetch('https://api.openrouteservice.org/v2/directions/foot-walking/geojson', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': '5b3ce3597851110001cf6248a2ec16a358794cc7926c7a5bc62141f7',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        coordinates: [
+                            [start.lng, start.lat],
+                            [ziel.lng, ziel.lat]
+                        ],
+                        avoid_polygons: avoidGeojson
+                    })
+                });
+                const data = await response.json();
+                if (window.routeLayer) map.removeLayer(window.routeLayer);
+                window.routeLayer = L.geoJSON(data, {color: 'blue', weight: 5}).addTo(map);
+                map.fitBounds(window.routeLayer.getBounds());
+            }
+
+            const routingBtn = document.getElementById('route-button');
+            routingBtn.onclick = async () => {
+                if (!baustellenGeojson) return alert('Baustellen werden noch geladen...');
+                if (!routeStart || !routeZiel) return alert('Bitte Start und Ziel wählen!');
+                await routeWithAvoidPolygons(routeStart, routeZiel, baustellenGeojson);
+                alert('Route berechnet! (blaue Linie)');
+            };
+        });
+    </script>
+</body>
 </html>

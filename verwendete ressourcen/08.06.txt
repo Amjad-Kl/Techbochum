@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapForAll - Accessible Navigation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <style>
+        :root {
+            --primary: #1A73E8;
+            --secondary: #34A853;
+            --danger: #EA4335;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .map-container {
+            height: calc(100vh - 80px);
+        }
+        
+        .access-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+        
+        .h-remaining {
+            height: calc(100% - 48px);
+        }
+        
+        @media (max-width: 640px) {
+            .sidebar {
+                width: 100% !important;
+            }
+            .map-container {
+                height: 60vh;
+            }
+        }
+        
+        /* Accessibility Classes */
+        .high-contrast {
+            --primary: #000000;
+            --secondary: #FFFFFF;
+            color: #000 !important;
+            background-color: #FFF !important;
+        }
+        
+        .dark-mode {
+            --primary: #3A86FF;
+            --secondary: #8338EC;
+            background-color: #121212 !important;
+            color: #FFF !important;
+        }
+        
+        .large-text {
+            font-size: 1.2em !important;
+        }
+        
+        .large-text-sm {
+            font-size: 1.1em !important;
+        }
+        
+        /* Switch Toggle */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #1A73E8;
+        }
+        
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #1A73E8;
+        }
+        
+        /* Custom checkbox for filters */
+        .custom-checkbox {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            margin-right: 8px;
+        }
+        
+        .custom-checkbox:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .custom-checkbox:checked::after {
+            content: "✓";
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Leaflet map container */
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        /* Custom marker icons */
+        .accessible-icon {
+            background-color: #34A853;
+            border-radius: 50%;
+            border: 2px solid white;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            line-height: 28px;
+        }
+        
+        .unknown-icon {
+            background-color: #FBBC05;
+            border-radius: 50%;
+            border: 2px solid white;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            line-height: 28px;
+        }
+        
+        .issue-icon {
+            background-color: #EA4335;
+            border-radius: 50%;
+            border: 2px solid white;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            line-height: 28px;
+        }
+        
+        /* Routing control */
+        .leaflet-routing-container {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .leaflet-routing-container h3 {
+            margin-top: 0;
+            font-size: 14px;
+        }
+        
+        /* GPS location button */
+        .leaflet-control-locate {
+            background-color: white;
+            border-radius: 4px;
+            padding: 3px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+        }
+
+        /* Accessibility Modal Fixes */
+        #accessibility-modal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        #accessibility-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 overflow-hidden">
+    <div class="flex flex-col h-screen">
+        <!-- Header -->
+        <header class="bg-blue-600 text-white shadow-md">
+            <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-wheelchair text-2xl"></i>
+                    <h1 class="text-xl font-bold">MapForAll</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="language-btn" class="flex items-center space-x-1 bg-blue-700 hover:bg-blue-800 px-3 py-1 rounded-lg transition">
+                        <i class="fas fa-globe"></i>
+                        <span>DE/EN</span>
+                    </button>
+                    <button id="accessibility-btn" class="flex items-center space-x-1 bg-blue-700 hover:bg-blue-800 px-3 py-1 rounded-lg transition">
+                        <i class="fas fa-universal-access"></i>
+                        <span>Accessibility</span>
+                    </button>
+                    <button class="flex items-center space-x-1 bg-blue-700 hover:bg-blue-800 px-3 py-1 rounded-lg transition">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Sign In</span>
+                    </button>
+                    <button id="menu-toggle" class="text-xl">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="flex flex-1 overflow-hidden">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="bg-white shadow-lg w-80 transform -translate-x-full md:translate-x-0 transition-transform duration-300 fixed md:relative z-10 h-full">
+                <div class="p-4 border-b border-gray-200">
+                    <div class="relative">
+                        <input id="search-input" type="text" placeholder="Search locations (Dortmund, Bochum, etc.)" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <!-- Filters Section -->
+                <div class="p-4 border-b border-gray-200">
+                    <h2 class="font-semibold mb-3">Filter by Accessibility</h2>
+                    <div class="space-y-2">
+                        <label class="flex items-center cursor-pointer py-1">
+                            <input type="checkbox" class="custom-checkbox" checked id="filter-wheelchair">
+                            <span class="ml-2">Wheelchair accessible</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer py-1">
+                            <input type="checkbox" class="custom-checkbox" id="filter-no-steps">
+                            <span class="ml-2">No steps</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer py-1">
+                            <input type="checkbox" class="custom-checkbox" checked id="filter-auto-doors">
+                            <span class="ml-2">Automatic doors</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer py-1">
+                            <input type="checkbox" class="custom-checkbox" id="filter-elevators">
+                            <span class="ml-2">Elevators available</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Recent Reports -->
+                <div class="p-4 h-remaining overflow-y-auto">
+                    <h2 class="font-semibold mb-3">Recent Reports</h2>
+                    <div class="space-y-3" id="reports-list">
+                        <!-- Reports will be added dynamically -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Map Section -->
+            <main class="flex-1 flex flex-col">
+                <!-- Map Controls -->
+                <div class="bg-white p-2 border-b border-gray-200 flex items-center justify-between">
+                    <div class="flex space-x-2">
+                        <button id="locate-me" class="p-2 rounded-full hover:bg-gray-100">
+                            <i class="fas fa-location-arrow text-blue-600"></i>
+                        </button>
+                        <button id="map-layers" class="p-2 rounded-full hover:bg-gray-100">
+                            <i class="fas fa-layer-group text-blue-600"></i>
+                        </button>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="plan-route" class="px-3 py-1 bg-blue-600 text-white rounded-lg flex items-center">
+                            <i class="fas fa-route mr-2"></i>
+                            <span>Plan Route</span>
+                        </button>
+                        <button id="report-button" class="px-3 py-1 bg-red-600 text-white rounded-lg flex items-center">
+                            <i class="fas fa-plus-circle mr-2"></i>
+                            <span>Report Barrier</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Map Container -->
+                <div class="map-container bg-gray-200 relative">
+                    <div id="map"></div>
+                    
+                    <!-- Map Legend -->
+                    <div class="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-lg text-sm z-[1000]">
+                        <div class="flex items-center mb-2">
+                            <div class="access-icon bg-green-500 mr-2"><i class="fas fa-check"></i></div>
+                            <span>Fully accessible</span>
+                        </div>
+                        <div class="flex items-center mb-2">
+                            <div class="access-icon bg-yellow-500 mr-2"><i class="fas fa-question"></i></div>
+                            <span>Unknown status</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="access-icon bg-red-500 mr-2"><i class="fas fa-exclamation"></i></div>
+                            <span>Accessibility issues</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <div class="md:hidden bg-white border-t border-gray-200 py-2 px-4 flex justify-around">
+            <button class="flex flex-col items-center text-blue-600">
+                <i class="fas fa-map-marker-alt text-lg"></i>
+                <span class="text-xs">Locations</span>
+            </button>
+            <button id="report-button-mobile" class="flex flex-col items-center text-red-600">
+                <i class="fas fa-plus-circle text-lg"></i>
+                <span class="text-xs">Report</span>
+            </button>
+            <button class="flex flex-col items-center text-gray-600">
+                <i class="fas fa-route text-lg"></i>
+                <span class="text-xs">Routes</span>
+            </button>
+            <button id="menu-toggle-mobile" class="flex flex-col items-center text-gray-600">
+                <i class="fas fa-bars text-lg"></i>
+                <span class="text-xs">Menu</span>
+            </button>
+        </div>
+        
+        <!-- Report Modal -->
+        <div id="report-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000] hidden">
+            <div class="bg-white rounded-lg w-full max-w-md mx-4">
+                <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">Report Accessibility Barrier</h2>
+                    <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Where is the barrier?">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Issue Type</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option>Select an issue type</option>
+                            <option>Step or stairs without ramp</option>
+                            <option>Narrow doorway</option>
+                            <option>No automatic doors</option>
+                            <option>Uneven pavement</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg" rows="3" placeholder="Provide any additional details..."></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Add Photo (optional)</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer">
+                            <i class="fas fa-camera text-2xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-500 text-sm">Tap to add photo</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-t border-gray-200 flex justify-end space-x-2">
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg">Cancel</button>
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg">Submit Report</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Route Modal -->
+        <div id="route-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000] hidden">
+            <div class="bg-white rounded-lg w-full max-w-md mx-4">
+                <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">Plan Accessible Route</h2>
+                    <button id="close-route-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Starting Point</label>
+                        <input type="text" id="route-start" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Your location">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+                        <input type="text" id="route-end" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Where do you want to go?">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Accessibility Preferences</label>
+                        <div class="space-y-2 mt-2">
+                            <label class="flex items-center cursor-pointer py-1">
+                                <input type="checkbox" class="custom-checkbox" checked>
+                                <span class="ml-2">Avoid stairs</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer py-1">
+                                <input type="checkbox" class="custom-checkbox" checked>
+                                <span class="ml-2">Prefer ramps</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer py-1">
+                                <input type="checkbox" class="custom-checkbox">
+                                <span class="ml-2">Elevators only</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-t border-gray-200 flex justify-end space-x-2">
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg">Cancel</button>
+                    <button id="calculate-route" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Calculate Route</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Accessibility Modal -->
+        <div id="accessibility-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
+            <div class="bg-white rounded-lg w-full max-w-md mx-4">
+                <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">Accessibility Settings</h2>
+                    <button id="close-accessibility-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="mb-4">
+                        <label class="flex items-center justify-between cursor-pointer py-2">
+                            <div class="flex items-center">
+                                <i class="fas fa-adjust mr-3 text-blue-600"></i>
+                                <span>High Contrast</span>
+                            </div>
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" id="high-contrast-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                <label for="high-contrast-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center justify-between cursor-pointer py-2">
+                            <div class="flex items-center">
+                                <i class="fas fa-moon mr-3 text-blue-600"></i>
+                                <span>Dark Mode</span>
+                            </div>
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" id="dark-mode-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                <label for="dark-mode-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center justify-between cursor-pointer py-2">
+                            <div class="flex items-center">
+                                <i class="fas fa-volume-up mr-3 text-blue-600"></i>
+                                <span>Audio Description</span>
+                            </div>
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" id="audio-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                <label for="audio-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center justify-between cursor-pointer py-2">
+                            <div class="flex items-center">
+                                <i class="fas fa-text-height mr-3 text-blue-600"></i>
+                                <span>Large Text</span>
+                            </div>
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" id="large-text-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                <label for="large-text-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="p-4 border-t border-gray-200 flex justify-center">
+                    <button id="reset-accessibility" class="px-4 py-2 text-blue-600 underline">Reset to Default</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <!-- Leaflet Routing Machine -->
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <!-- Leaflet Locate Control -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.1/dist/L.Control.Locate.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.1/dist/L.Control.Locate.min.css" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the map centered on Germany
+            const map = L.map('map').setView([51.1657, 10.4515], 6);
+            
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            // Add locate control
+            const lc = L.control.locate({
+                position: 'topleft',
+                strings: {
+                    title: "Show me where I am"
+                },
+                locateOptions: {
+                    maxZoom: 16,
+                    enableHighAccuracy: true
+                }
+            }).addTo(map);
+            
+            // Predefined locations
+            const predefinedLocations = {
+                "Dortmund": {
+                    lat: 51.5136,
+                    lng: 7.4653,
+                    zoom: 12
+                },
+                "Bochum": {
+                    lat: 51.4818,
+                    lng: 7.2162,
+                    zoom: 12
+                },
+                "Hochschule Bochum": {
+                    lat: 51.4537,
+                    lng: 7.2507,
+                    zoom: 16,
+                    description: "University of Applied Sciences Bochum"
+                },
+                "Ruhr Universität Bochum": {
+                    lat: 51.4456,
+                    lng: 7.2636,
+                    zoom: 16,
+                    description: "Ruhr University Bochum"
+                }
+            };
+
+            // Sample data for accessible locations
+            const locations = [
+                {
+                    name: "Dortmund Central Station",
+                    lat: 51.5176,
+                    lng: 7.4593,
+                    type: "accessible",
+                    reports: 5,
+                    description: "Main train station with elevators and accessible facilities.",
+                    features: ["wheelchair", "auto-doors", "elevators"]
+                },
+                {
+                    name: "Bochum Central Station",
+                    lat: 51.4783,
+                    lng: 7.2228,
+                    type: "accessible",
+                    reports: 4,
+                    description: "Train station with wheelchair access and automatic doors.",
+                    features: ["wheelchair", "auto-doors"]
+                },
+                {
+                    name: "Hochschule Bochum - Main Building",
+                    lat: 51.4537,
+                    lng: 7.2507,
+                    type: "accessible",
+                    reports: 3,
+                    description: "Main building with accessible entrances and elevators.",
+                    features: ["wheelchair", "no-steps", "elevators"]
+                },
+                {
+                    name: "Ruhr Universität Bochum - Library",
+                    lat: 51.4465,
+                    lng: 7.2628,
+                    type: "accessible",
+                    reports: 6,
+                    description: "University library with wheelchair access and automatic doors.",
+                    features: ["wheelchair", "auto-doors", "elevators"]
+                },
+                {
+                    name: "Dortmund U-Tower",
+                    lat: 51.5149,
+                    lng: 7.4638,
+                    type: "issue",
+                    reports: 2,
+                    description: "Some areas have steps without alternative access.",
+                    features: []
+                },
+                {
+                    name: "Bochum City Park",
+                    lat: 51.4839,
+                    lng: 7.2167,
+                    type: "unknown",
+                    reports: 1,
+                    description: "Accessibility status unknown - needs verification.",
+                    features: []
+                }
+            ];
+            
+            // Create custom icons
+            const accessibleIcon = L.divIcon({
+                className: 'accessible-icon',
+                html: '<i class="fas fa-check"></i>',
+                iconSize: [32, 32]
+            });
+            
+            const unknownIcon = L.divIcon({
+                className: 'unknown-icon',
+                html: '<i class="fas fa-question"></i>',
+                iconSize: [32, 32]
+            });
+            
+            const issueIcon = L.divIcon({
+                className: 'issue-icon',
+                html: '<i class="fas fa-exclamation"></i>',
+                iconSize: [32, 32]
+            });
+            
+            // Add markers to the map
+            const markers = [];
+            locations.forEach(location => {
+                let icon;
+                if (location.type === "accessible") {
+                    icon = accessibleIcon;
+                } else if (location.type === "unknown") {
+                    icon = unknownIcon;
+                } else {
+                    icon = issueIcon;
+                }
+                
+                const marker = L.marker([location.lat, location.lng], { icon: icon })
+                    .addTo(map)
+                    .bindPopup(`
+                        <h3 class="font-bold mb-1">${location.name}</h3>
+                        <p class="text-sm mb-2">${location.description}</p>
+                        <button class="text-blue-600 text-sm font-medium">More Details</button>
+                    `);
+                
+                markers.push({
+                    marker: marker,
+                    data: location
+                });
+            });
+            
+            // Initialize routing control (hidden by default)
+            const routeControl = L.Routing.control({
+                waypoints: [],
+                routeWhileDragging: true,
+                show: false,
+                collapsible: true,
+                addWaypoints: false,
+                fitSelectedRoutes: true,
+                lineOptions: {
+                    styles: [{color: '#1A73E8', opacity: 0.7, weight: 5}]
+                },
+                createMarker: function() { return null; }
+            }).addTo(map);
+            
+            // Search functionality
+            document.getElementById('search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const searchTerm = this.value.trim();
+                    if (searchTerm) {
+                        const location = predefinedLocations[searchTerm];
+                        if (location) {
+                            map.setView([location.lat, location.lng], location.zoom || 14);
+                            document.getElementById('sidebar').classList.add('-translate-x-full');
+                        } else {
+                            // Try to find a match in our locations
+                            const foundLocation = locations.find(loc => 
+                                loc.name.toLowerCase().includes(searchTerm.toLowerCase())
+                            );
+                            if (foundLocation) {
+                                map.setView([foundLocation.lat, foundLocation.lng], 16);
+                                document.getElementById('sidebar').classList.add('-translate-x-full');
+                            } else {
+                                alert('Location not found. Try "Dortmund", "Bochum", "Hochschule Bochum", or "Ruhr Universität Bochum"');
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update reports list in sidebar
+            function updateReportsList() {
+                const reportsList = document.getElementById('reports-list');
+                reportsList.innerHTML = '';
+                
+                // Sort by number of reports (descending)
+                const sortedLocations = [...locations].sort((a, b) => b.reports - a.reports);
+                
+                sortedLocations.forEach(location => {
+                    let bgClass, iconClass, textClass, icon;
+                    
+                    if (location.type === "accessible") {
+                        bgClass = 'bg-blue-50';
+                        iconClass = 'bg-green-500';
+                        textClass = 'text-blue-800';
+                        icon = '<i class="fas fa-check"></i>';
+                    } else if (location.type === "unknown") {
+                        bgClass = 'bg-yellow-50';
+                        iconClass = 'bg-yellow-500';
+                        textClass = 'text-yellow-800';
+                        icon = '<i class="fas fa-question"></i>';
+                    } else {
+                        bgClass = 'bg-red-50';
+                        iconClass = 'bg-red-500';
+                        textClass = 'text-red-800';
+                        icon = '<i class="fas fa-exclamation"></i>';
+                    }
+                    
+                    const reportItem = document.createElement('div');
+                    reportItem.className = `${bgClass} p-3 rounded-lg`;
+                    reportItem.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium ${textClass}">${location.name}</h3>
+                                <p class="text-sm text-gray-600">${location.reports} ${location.reports === 1 ? 'report' : 'reports'}</p>
+                            </div>
+                            <div class="access-icon ${iconClass}">
+                                ${icon}
+                            </div>
+                        </div>
+                        <div class="mt-2 text-sm">
+                            <p>${location.description}</p>
+                            <button class="mt-2 ${textClass} text-sm font-medium">View Details</button>
+                        </div>
+                    `;
+                    
+                    reportItem.addEventListener('click', () => {
+                        map.setView([location.lat, location.lng], 16);
+                        document.getElementById('sidebar').classList.add('-translate-x-full');
+                    });
+                    
+                    reportsList.appendChild(reportItem);
+                });
+            }
+            
+            // Filter markers based on selected filters
+            function filterMarkers() {
+                const wheelchairChecked = document.getElementById('filter-wheelchair').checked;
+                const noStepsChecked = document.getElementById('filter-no-steps').checked;
+                const autoDoorsChecked = document.getElementById('filter-auto-doors').checked;
+                const elevatorsChecked = document.getElementById('filter-elevators').checked;
+                
+                markers.forEach(markerObj => {
+                    const location = markerObj.data;
+                    let show = false;
+                    
+                    // If no filters are selected, show all
+                    if (!wheelchairChecked && !noStepsChecked && !autoDoorsChecked && !elevatorsChecked) {
+                        show = true;
+                    } else {
+                        // Check if location matches any selected filters
+                        if (wheelchairChecked && location.features.includes("wheelchair")) {
+                            show = true;
+                        }
+                        if (noStepsChecked && location.features.includes("no-steps")) {
+                            show = true;
+                        }
+                        if (autoDoorsChecked && location.features.includes("auto-doors")) {
+                            show = true;
+                        }
+                        if (elevatorsChecked && location.features.includes("elevators")) {
+                            show = true;
+                        }
+                    }
+                    
+                    if (show) {
+                        if (!map.hasLayer(markerObj.marker)) {
+                            markerObj.marker.addTo(map);
+                        }
+                    } else {
+                        if (map.hasLayer(markerObj.marker)) {
+                            map.removeLayer(markerObj.marker);
+                        }
+                    }
+                });
+            }
+            
+            // Toggle sidebar menu
+            document.getElementById('menu-toggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            });
+            
+            document.getElementById('menu-toggle-mobile').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            });
+
+            // Show/hide report modal
+            document.getElementById('report-button').addEventListener('click', function() {
+                document.getElementById('report-modal').classList.remove('hidden');
+            });
+            
+            document.getElementById('report-button-mobile').addEventListener('click', function() {
+                document.getElementById('report-modal').classList.remove('hidden');
+            });
+            
+            document.getElementById('close-modal').addEventListener('click', function() {
+                document.getElementById('report-modal').classList.add('hidden');
+            });
+            
+            // Show/hide route modal
+            document.getElementById('plan-route').addEventListener('click', function() {
+                document.getElementById('route-modal').classList.remove('hidden');
+            });
+            
+            document.getElementById('close-route-modal').addEventListener('click', function() {
+                document.getElementById('route-modal').classList.add('hidden');
+            });
+            
+            // Calculate route
+            document.getElementById('calculate-route').addEventListener('click', function() {
+                const start = document.getElementById('route-start').value;
+                const end = document.getElementById('route-end').value;
+                
+                // For demo purposes, we'll use hardcoded coordinates
+                // In a real app, you would geocode the addresses
+                routeControl.setWaypoints([
+                    L.latLng(51.4537, 7.2507),  // Start (Hochschule Bochum)
+                    L.latLng(51.4465, 7.2628)   // End (Ruhr Universität Library)
+                ]);
+                
+                document.getElementById('route-modal').classList.add('hidden');
+            });
+            
+            // Locate me button
+            document.getElementById('locate-me').addEventListener('click', function() {
+                lc.start();
+            });
+            
+            // Close modal when clicking outside
+            document.getElementById('report-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    document.getElementById('report-modal').classList.add('hidden');
+                }
+            });
+            
+            document.getElementById('route-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    document.getElementById('route-modal').classList.add('hidden');
+                }
+            });
+            
+            // Initialize filters
+            document.querySelectorAll('.custom-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', filterMarkers);
+            });
+            
+            // Initialize reports list
+            updateReportsList();
+            
+            // Accessibility Modal Functionality
+            const accessibilityModal = document.getElementById('accessibility-modal');
+            const accessibilityBtn = document.getElementById('accessibility-btn');
+            const closeAccessibilityModal = document.getElementById('close-accessibility-modal');
+            const resetAccessibility = document.getElementById('reset-accessibility');
+            
+            // Accessibility modal starts hidden by having the hidden class
+            accessibilityModal.classList.add('hidden');
+            
+            // Show modal
+            if (accessibilityBtn) {
+                accessibilityBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    accessibilityModal.classList.add('show');
+                });
+            }
+            
+            // Hide modal
+            if (closeAccessibilityModal) {
+                closeAccessibilityModal.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    accessibilityModal.classList.remove('show');
+                });
+            }
+            
+            // Hide modal when clicking outside
+            accessibilityModal.addEventListener('click', function(e) {
+                if (e.target === accessibilityModal) {
+                    accessibilityModal.classList.remove('show');
+                }
+            });
+            
+            // Toggle functionality
+            document.getElementById('high-contrast-toggle').addEventListener('change', function() {
+                document.body.classList.toggle('high-contrast', this.checked);
+                localStorage.setItem('highContrast', this.checked);
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('change', function() {
+                document.body.classList.toggle('dark-mode', this.checked);
+                localStorage.setItem('darkMode', this.checked);
+            });
+
+            document.getElementById('large-text-toggle').addEventListener('change', function() {
+                document.body.classList.toggle('large-text', this.checked);
+                document.querySelectorAll('.text-sm').forEach(el => {
+                    el.classList.toggle('large-text-sm', this.checked);
+                });
+                localStorage.setItem('largeText', this.checked);
+            });
+
+            // Reset to default
+            resetAccessibility.addEventListener('click', function() {
+                document.body.classList.remove('high-contrast', 'dark-mode', 'large-text');
+                document.querySelectorAll('.text-sm').forEach(el => {
+                    el.classList.remove('large-text-sm');
+                });
+                
+                document.getElementById('high-contrast-toggle').checked = false;
+                document.getElementById('dark-mode-toggle').checked = false;
+                document.getElementById('audio-toggle').checked = false;
+                document.getElementById('large-text-toggle').checked = false;
+                
+                localStorage.removeItem('highContrast');
+                localStorage.removeItem('darkMode');
+                localStorage.removeItem('audioDescriptions');
+                localStorage.removeItem('largeText');
+            });
+
+            // Load saved preferences
+            if (localStorage.getItem('highContrast') === 'true') {
+                document.body.classList.add('high-contrast');
+                document.getElementById('high-contrast-toggle').checked = true;
+            }
+            
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('dark-mode-toggle').checked = true;
+            }
+            
+            if (localStorage.getItem('largeText') === 'true') {
+                document.body.classList.add('large-text');
+                document.querySelectorAll('.text-sm').forEach(el => {
+                    el.classList.add('large-text-sm');
+                });
+                document.getElementById('large-text-toggle').checked = true;
+            }
+
+            // Language switcher functionality
+            const languageBtn = document.getElementById('language-btn');
+            let currentLanguage = localStorage.getItem('language') || 'en';
+            
+            function updateLanguage() {
+                if (currentLanguage === 'de') {
+                    // German translations
+                    document.querySelector('h1').textContent = 'MapForAll';
+                    document.getElementById('search-input').placeholder = 'Orte suchen (Dortmund, Bochum, etc.)';
+                    document.getElementById('accessibility-btn span').textContent = 'Barrierefreiheit';
+                    document.querySelector('button:has(.fa-sign-in-alt) span').textContent = 'Anmelden';
+                    // Add more translations as needed
+                } else {
+                    // English (default)
+                    document.querySelector('h1').textContent = 'MapForAll';
+                    document.getElementById('search-input').placeholder = 'Search locations (Dortmund, Bochum, etc.)';
+                    document.getElementById('accessibility-btn span').textContent = 'Accessibility';
+                    document.querySelector('button:has(.fa-sign-in-alt) span').textContent = 'Sign In';
+                }
+            }
+            
+            languageBtn.addEventListener('click', function() {
+                currentLanguage = currentLanguage === 'en' ? 'de' : 'en';
+                localStorage.setItem('language', currentLanguage);
+                updateLanguage();
+                languageBtn.querySelector('span').textContent = currentLanguage === 'en' ? 'DE/EN' : 'EN/DE';
+            });
+            
+            // Initialize language on load
+            updateLanguage();
+            languageBtn.querySelector('span').textContent = currentLanguage === 'en' ? 'DE/EN' : 'EN/DE';
+        });
+    </script>
+</body>
+</html> 

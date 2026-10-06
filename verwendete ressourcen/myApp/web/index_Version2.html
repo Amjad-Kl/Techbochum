@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SenseMap - Barrierefreiheit in Bochum</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <a href="#" onclick="showPage('home')">Startseite</a>
+    <a href="#" onclick="showPage('about')">Info</a>
+    <a href="#" onclick="showPage('bewertung')">Bewertung</a>
+  </nav>
+  <main>
+    <section id="home" class="page active">
+      <h1>SenseMap - Barrierefreiheit in Bochum</h1>
+      <p>Willkommen! Hier findest du Informationen zur Barrierefreiheit in Bochum.</p>
+      <!-- Beispielkarte: -->
+      <iframe
+        src="https://www.openstreetmap.org/export/embed.html?bbox=7.2155%2C51.4635%2C7.2655%2C51.4935&amp;layer=mapnik"
+        style="width:100%;height:320px;border:1px solid #ccc;"></iframe>
+    </section>
+    <section id="about" class="page">
+      <h2>Über das Projekt</h2>
+      <p>SenseMap ist eine crowd-basierte Lösung für inklusive Navigation und Ortsbewertung in Bochum.</p>
+      <ul>
+        <li>Bewerte Orte in Bezug auf Barrierefreiheit</li>
+        <li>Hilf anderen durch deine Erfahrungen</li>
+        <li>Finde zugängliche Orte in Bochum</li>
+      </ul>
+    </section>
+    <section id="bewertung" class="page">
+      <h2>Ort bewerten</h2>
+      <form id="bewertungsForm" onsubmit="return submitBewertung();">
+        <label>
+          Ort/Adresse:
+          <input type="text" id="ortName" required>
+        </label><br>
+        <label>
+          Barrierefreiheit (1 = schlecht, 5 = super):
+          <select id="bewertungWert">
+            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+          </select>
+        </label><br>
+        <label>
+          Kommentar:
+          <input type="text" id="kommentar">
+        </label><br>
+        <button type="submit">Absenden</button>
+      </form>
+      <div id="bewertungsListe"></div>
+    </section>
+    <section id="notfound" class="page">
+      <h2>Seite nicht gefunden</h2>
+      <p>Die gewünschte Seite existiert nicht.</p>
+      <button onclick="showPage('home')">Zur Startseite</button>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

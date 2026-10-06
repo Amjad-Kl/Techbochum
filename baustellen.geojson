@@ -1,0 +1,720 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2148719, 51.4797058]
+      },
+      "properties": {
+        "name": "ABC-Str. 5-9",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "26. Mai 2025 bis 27. Juni 2025",
+        "work": "Autokran, Baumaterial, Container (Schüttgütern), Hubsteiger, Schrägaufzug"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1931802, 51.4767339]
+      },
+      "properties": {
+        "name": "Alleestraße zwischen Bessemer Straße und Westring",
+        "status": "Vollsperrung Fahrbahn, Einsatz Lichtsignalanlage, Verengung 2 auf 1, Beschränkung auf 30 km/h, Halbseitige Sperrung Fahrbahn",
+        "duration": "6. April 2024 bis 31. Juli 2027",
+        "work": "Kanalbauarbeiten, Straßenbauarbeiten, Versorgungsleitungsbauarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1756378, 51.4484181]
+      },
+      "properties": {
+        "name": "Am Bremkamp",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "7. April 2025 bis 30. Juni 2025",
+        "work": "Bergbauliche Sicherungsarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+         "type": "Point",
+         "coordinates": [
+            7.1732707,
+            51.4252267
+         ]
+      },
+      "properties": {
+         "name": "Am Hahl im Welperschen Welperstr",
+         "status": null,
+         "duration": null,
+         "work": null,
+         "contractor": null
+      }
+   },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.155171, 51.4314636]
+      },
+      "properties": {
+        "name": "Am Hedtberg 75 bis Hasenwinkeler Str.",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "20. Januar 2025 bis 3. Juli 2025",
+        "work": "Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1576575, 51.502801]
+      },
+      "properties": {
+        "name": "Am Hohberg",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "13. November 2023 bis 30. September 2025",
+        "work": "Einsturzgefahr"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1908451, 51.4818062]
+      },
+      "properties": {
+        "name": "An der Maarbrücke (Einmündung Gahlensche Str.)",
+        "status": "Vollsperrung Fahrbahn, Beschränkung auf 30 km/h, Vollsperrung Radweg, teilweise Sperrung Fahrbahn",
+        "duration": "16. Mai 2025 bis 6. Juli 2025",
+        "work": "Rohrbruch",
+        "contractor": "Stadtwerke Bochum Netz GmbH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.3121884, 51.5031616]
+      },
+      "properties": {
+        "name": "Auf dem Gericht",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "10. Februar 2025 bis 28. November 2025",
+        "work": "Kanalbauarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.3213936, 51.4620565]
+      },
+      "properties": {
+        "name": "Auf dem Jäger (Höhe DB-Brücke)",
+        "status": "Einbahnstraße",
+        "duration": "23. Juni 2025 bis 28. Juni 2025",
+        "work": "Brückenprüfung, Hubsteiger",
+        "contractor": "DB Fahrwegdienste GmbH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.3128074, 51.4937121]
+      },
+      "properties": {
+        "name": "Bauernkamp 1 bis 3 (25 m)",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "11. Oktober 2024 bis 31. Dezember 2025",
+        "work": "Einsturzgefahr, Tagesbruch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1714423, 51.5025438]
+      },
+      "properties": {
+        "name": "Berthastr. 12 -ggü (6 m)",
+        "status": "Halbseitige Sperrung Fahrbahn",
+        "duration": "26. März 2025 bis 17. Juli 2025",
+        "work": "Haltverbot VZ283, LWL, z.B. Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1714423, 51.5025438]
+      },
+      "properties": {
+        "name": "Berthastr. 6 bis 46 (430 m)",
+        "status": "Beschränkung auf 30 km/h, teilweise Sperrung Fahrbahn, Vollsperrung Gehweg",
+        "duration": "27. März 2025 bis 26. Juni 2025",
+        "work": "Haltverbot VZ283, LWL, z.B. Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1714423, 51.5025438]
+      },
+      "properties": {
+        "name": "Berthastr. 6 bis ggü (6 m)",
+        "status": "Beschränkung auf 30 km/h, Halbseitige Sperrung Fahrbahn",
+        "duration": "24. März 2025 bis 17. Juli 2025",
+        "work": "Haltverbot VZ283, LWL, z.B. Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2040388, 51.4783777]
+      },
+      "properties": {
+        "name": "Bessemerstraße zwischen Baarestraße und Henry-Bessemer-Park",
+        "status": "Verengung 2 auf 1, Beschränkung auf 30 km/h",
+        "duration": "18. März 2024 bis 11. August 2025",
+        "work": "Kanalbauarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+         "type": "Point",
+         "coordinates": [
+            85.2575011,
+            51.4740926
+         ]
+      },
+      "properties": {
+         "name": "Henry-Bessemer-Park Haus 3",
+         "status": null,
+         "duration": null,
+         "work": null,
+         "contractor": null
+      }
+   },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1831943, 51.4493572]
+      },
+      "properties": {
+        "name": "Blumenfeldstr. 185",
+        "status": "Halbseitige Sperrung Fahrbahn",
+        "duration": "30. Oktober 2024 bis 1. Januar 1904",
+        "work": "Tagesbruch"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.3269501, 51.468971]
+      },
+      "properties": {
+        "name": "Bonifatiusstr. 31",
+        "status": "Halbseitige Sperrung Fahrbahn, Restfahrbahnbreite 3,0m i.L.",
+        "duration": "13. Februar 2025 bis 7. Juli 2025",
+        "work": "LWL, z.B. Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.3269501, 51.468971]
+      },
+      "properties": {
+        "name": "Bonifatiusstr. seitlich Stockumer Str. 33 bis seitlich Nr. 31",
+        "status": "Halbseitige Sperrung Fahrbahn, teilweise Sperrung Fahrbahn, Restfahrbahnbreite 3,0m i.L.",
+        "duration": "13. Februar 2025 bis 7. Juli 2025",
+        "work": "LWL, z.B. Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2173458, 51.4851723]
+      },
+      "properties": {
+        "name": "Brückstraße zwischen Hans-Böckler- und Franzstraße",
+        "status": "Relevant für Pressefilter",
+        "duration": "23. Juni 2025 bis 27. Juni 2025",
+        "work": "Beschilderungsarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2562904, 51.4967771]
+      },
+      "properties": {
+        "name": "Castroper Hellweg",
+        "status": "Vollsperrung Fahrbahn, Halbseitige Sperrung Fahrbahn",
+        "duration": "10. Juni 2025 bis 26. Juni 2025",
+        "work": "Straßenbauarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2562904, 51.4967771]
+      },
+      "properties": {
+        "name": "Castroper Hellweg / Heinrichstr. / Schwerinstr. (SZG Umbau)",
+        "status": "Verengung 2 auf 1, teilweise Sperrung Fahrbahn, Vollsperrung Gehweg",
+        "duration": "5. Juli 2021 bis 30. Juni 2026",
+        "work": "Baumaßnahme Stadt Bochum, Baustellen Ein- u. Ausfahrt, Bauzaun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.234222, 51.4882435]
+      },
+      "properties": {
+        "name": "Castroper Straße zwischen Stadionring und I.Parallelstraße",
+        "status": "Vollsperrung einer Richtungsfahrbahn, Spurverlegung",
+        "duration": "11. Juni 2025 bis 4. Juli 2025",
+        "work": "Deckensanierung, Gleisarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1707369, 51.4851746]
+      },
+      "properties": {
+        "name": "Centrumstraße Höhe Hansastraße, Darpestraße Höhe A40",
+        "status": "Einsatz Lichtsignalanlage, Beschränkung auf 30 km/h, Halbseitige Sperrung Fahrbahn",
+        "duration": "25. November 2024 bis 31. Juli 2025",
+        "work": "Straßenbauarbeiten, Versorgungsleitungsbauarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.3101893, 51.4700635]
+      },
+      "properties": {
+        "name": "Dachsweg 1",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "25. März 2025 bis 16. Juli 2025",
+        "work": "Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1826296, 51.4858799]
+      },
+      "properties": {
+        "name": "Darpestr. 4 bis Einmündung Carolinienglückstraße (700 m)",
+        "status": "Einsatz Lichtsignalanlage, Halbseitige Sperrung Fahrbahn, Vollsperrung Gehweg",
+        "duration": "10. Juni 2025 bis 30. Juni 2025",
+        "work": "LWL, z.B. Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+       "type": "Feature",
+       "geometry": {
+          "type": "Point",
+          "coordinates": [
+              7.1825594,
+              51.4912752
+          ]
+       },
+       "properties": {
+          "name": "Carolinienglückstraße 7, 44793 Bochum",
+          "status": null,
+          "duration": null,
+          "work": null,
+          "contractor": null
+       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1784218, 51.4197716]
+      },
+      "properties": {
+        "name": "Donnerbecke 82a - Wuppertaler Str. (Wanderbaustelle)",
+        "status": "Vollsperrung Fahrbahn, Nur bestimmte Uhrzeit",
+        "duration": "2. Januar 2025 bis 11. Juli 2025",
+        "work": "Glasfaser",
+        "contractor": "Demirovic, Rahman"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1784218, 51.4197716]
+      },
+      "properties": {
+        "name": "Donnerbecke 97 bis Einmündung Lindener Str. gem. Lageplan",
+        "status": "Halbseitige Sperrung Fahrbahn, Restfahrbahnbreite 3,0m i.L., Fußgänger auf Fahrbahn",
+        "duration": "28. November 2024 bis 11. Juli 2025",
+        "work": "Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1898343, 51.507039]
+      },
+      "properties": {
+        "name": "Dorstener Str. / Dinnendahlstr.",
+        "status": "Verengung 2 auf 1",
+        "duration": "4. Juni 2025 bis 27. Juni 2025",
+        "work": "Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2297967, 51.4298227]
+      },
+      "properties": {
+        "name": "Flaßkuhlstr. 52 - 52a",
+        "status": "Halbseitige Sperrung Fahrbahn",
+        "duration": "23. Juni 2025 bis 4. Juli 2025",
+        "work": "Deckensanierung, Straßenbauarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2457297, 51.4748843]
+      },
+      "properties": {
+        "name": "Freigrafendamm zwischen Immanuel-Kant- und Liebfrauenstraße",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "5. Mai 2025 bis 28. Juni 2025",
+        "work": "Kanalsanierung",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1328912, 51.4743443]
+      },
+      "properties": {
+        "name": "Fritz-Reuter-Str. 46",
+        "status": "Vollsperrung Fahrbahn, Beeinträchtigung ÖPNV, Vollsperrung Gehweg",
+        "duration": "6. Mai 2025 bis 30. Juni 2025",
+        "work": "Sondierung",
+        "contractor": "Stadtwerke Bochum Netz GmbH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.219525, 51.4685817]
+      },
+      "properties": {
+        "name": "Gabelsbergerstr. von Hugo-Schultz-Str. bis Friederikastr. 66",
+        "status": "Vollsperrung Fahrbahn, Einbahnstraße, teilweise Sperrung Fahrbahn, teilweise Sperrung Gehweg",
+        "duration": "5. Juni 2025 bis 25. Juli 2025",
+        "work": "Fernwärmeleitung",
+        "contractor": "Stadtwerke Bochum Netz GmbH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1535231, 51.501466]
+      },
+      "properties": {
+        "name": "Günnigfelder Str. / Aschenbruch",
+        "status": "Einsatz Lichtsignalanlage",
+        "duration": "10. Juni 2025 bis 10. Oktober 2025",
+        "work": "Kanalbauarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1535231, 51.501466]
+      },
+      "properties": {
+        "name": "Günnigfelder Straße zwischen Kirchstraße und Kruppstraße sowie Parkallee",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "14. Oktober 2024 bis 29. August 2025",
+        "work": "Kanalbauarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2053353, 51.4892559]
+      },
+      "properties": {
+        "name": "Gustavstr.",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "28. April 2025 bis 28. Februar 2026",
+        "work": "Kanalbauarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1579172, 51.5023988]
+      },
+      "properties": {
+        "name": "Hannoverstr. 74 bis 83 (6 m)",
+        "status": "Halbseitige Sperrung Fahrbahn",
+        "duration": "7. April 2025 bis 17. Juli 2025",
+        "work": "Haltverbot VZ283, LWL, z.B. Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.316881, 51.5052484]
+      },
+      "properties": {
+        "name": "Harpener Hellweg (Neubau Polizeipräsidium)",
+        "status": "Einsatz Lichtsignalanlage",
+        "duration": "24. Februar 2025 bis 26. Februar 2027",
+        "work": "Baustellen Ein- u. Ausfahrt"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.3234439, 51.4764217]
+      },
+      "properties": {
+        "name": "Hauptstr. 270 - 306",
+        "status": "Einsatz Lichtsignalanlage",
+        "duration": "10. Juni 2025 bis 4. Juli 2025",
+        "work": "Glasfaser",
+        "contractor": "RD Glasfaser GmbH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1720313, 51.4968438]
+      },
+      "properties": {
+        "name": "Heidackerstr. 59 bis 61 (Fahrbahnquerung halbseitig)",
+        "status": "Halbseitige Sperrung Fahrbahn",
+        "duration": "5. Mai 2025 bis 2. Juli 2025",
+        "work": "LWL, z.B. Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2213297, 51.4926904]
+      },
+      "properties": {
+        "name": "Herderallee zwischen Lessing- und Bergstraße",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "13. Januar 2025 bis 29. August 2025",
+        "work": "Kanalbauarbeiten",
+        "contractor": "Stadt Bochum Tiefbauamt"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.193179, 51.5104099]
+      },
+      "properties": {
+        "name": "Herzogstr.im Bereich Haus Nr. 36 ; Bergmannstraße ggü. Haus Nr. 37a ; Bleckstraße Höhe Pumpwerk",
+        "status": "Vollsperrung Fahrbahn, Beschränkung auf 30 km/h, Halbseitige Sperrung Fahrbahn",
+        "duration": "10. Januar 2024 bis 31. Juli 2025",
+        "work": "Kanalbauarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1640375, 51.4290623]
+      },
+      "properties": {
+        "name": "Hilligenstr. 2",
+        "status": "Halbseitige Sperrung Fahrbahn, teilweise Sperrung Gehweg",
+        "duration": "31. Juli 2024 bis 30. Juni 2025",
+        "work": "Stromleitung",
+        "contractor": "Stadtwerke Bochum Netz GmbH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2695852, 51.523631]
+      },
+      "properties": {
+        "name": "Hiltroper Landwehr zwischen Castroper Hellweg und Haus Nr. 32",
+        "status": "Einsatz Lichtsignalanlage, teilweise Sperrung Gehweg",
+        "duration": "19. Mai 2025 bis 27. Juni 2025",
+        "work": "Gehwegarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1743338, 51.5005954]
+      },
+      "properties": {
+        "name": "Hordeler Heide 150 auf 167",
+        "status": "Halbseitige Sperrung Fahrbahn",
+        "duration": "26. Mai 2025 bis 9. Juli 2025",
+        "work": "Haltverbot VZ283, LWL, z.B. Glasfaser",
+        "contractor": "Glasfaser Ruhr GmbH & Co. KG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2165016, 51.4801522]
+      },
+      "properties": {
+        "name": "Husemannplatz (einschl. BE Viktoriastraße)",
+        "status": "Vollsperrung Fahrbahn, Verengung 2 auf 1, teilweise Sperrung Gehweg",
+        "duration": "4. Mai 2023 bis 29. Mai 2026",
+        "work": "Abbrucharbeiten, Abdichtarbeiten, Baustelleneinrichtungsfläche, Straßenbauarbeiten, Versorgungsleitungsbauarbeiten",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1969175, 51.4427592]
+      },
+      "properties": {
+        "name": "Im Großen Busch",
+        "status": "Vollsperrung Fahrbahn",
+        "duration": "5. Juni 2025 bis 25. Juli 2025",
+        "work": "Sanierung Schachtdeckel",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.2092602, 51.4849044]
+      },
+      "properties": {
+        "name": "Imbuschplatz 2",
+        "status": "Einbahnstraße, Halbseitige Sperrung Fahrbahn, Vollsperrung Gehweg",
+        "duration": "3. März 2025 bis 6. Juli 2025",
+        "work": "Baumaterial, Baustelleneinrichtungsfläche, Container, Schrägaufzug"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.3242591, 51.4656296]
+      },
+      "properties": {
+        "name": "In der Schornau (von Hauptstr. bis DB-Brücke)",
+        "status": "Einbahnstraße",
+        "duration": "19. Mai 2025 bis 7. August 2025",
+        "work": "Wasserleitung",
+        "contractor": "Stadtwerke Bochum Netz GmbH / Stadtwe..."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1662921, 51.444243]
+      },
+      "properties": {
+        "name": "Karl-Arnold-Str.32 bis 40",
+        "status": "Halbseitige Sperrung Fahrbahn",
+        "duration": "30. Juni 2025 bis 4. Juli 2025",
+        "work": "Kanalsanierung",
+        "contractor": "Stadt Bochum"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.1813222, 51.4940411]
+      },
+      "properties": {
+        "name": "Karolinenstr. 93 auf 78",
+        "status": "Halbseitige Sperrung Fahrbahn",
+        "duration": "19. März 2025 bis 1. Juli 2025",
+        "work": "Haltverbot VZ283, LWL, z.B. Glasfaser"
+      }
+    }
+  ]
+}

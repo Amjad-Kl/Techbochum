@@ -10,8 +10,7 @@ SOURCE_DIR="C:\Users\Amjad\Desktop\MyGithubRepo (7)\SK2\website"
 
 # Definition der Stufen: "Ordnername:Tag:Commit-Titel"
 VERSIONS=(
-  "website_V6:v6.0:feat: Version 6 - Vollständige Feature-Integration und Tests"
-  "website_V6_1:v6.1:fix: Version 6.1 - Feinschliff, UI-Korrekturen und Bugfixes"
+  "website_V7:v7.0:feat: Version 7 - Vollständige Code mit README"
 )
 
 # -----------------------------------------------------------------------------

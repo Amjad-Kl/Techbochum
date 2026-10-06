@@ -1,0 +1,45 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f8f8f8;
+  margin: 0;
+  padding: 0;
+}
+nav {
+  background: #26547c;
+  padding: 1em;
+  text-align: center;
+}
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 1em;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+nav a:hover {
+  text-decoration: underline;
+}
+main {
+  max-width: 600px;
+  margin: 2em auto;
+  background: #fff;
+  padding: 2em;
+  border-radius: 8px;
+  box-shadow: 0 3px 12px #0001;
+}
+.page {
+  display: none;
+}
+.page.active {
+  display: block;
+}
+form label {
+  display: block;
+  margin-bottom: 0.5em;
+}
+#bewertungsListe {
+  margin-top: 2em;
+  padding: 1em;
+  background: #f0f0f0;
+  border-radius: 4px;
+}

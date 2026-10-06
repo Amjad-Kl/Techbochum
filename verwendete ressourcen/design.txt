@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            overflow: hidden;
+        }
+        
+        .country-label {
+            position: absolute;
+            font-weight: bold;
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+        
+        .ocean-label {
+            position: absolute;
+            font-style: italic;
+            color: #4a5568;
+            font-size: 0.8rem;
+        }
+        
+        .pin {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #f56565;
+            transform: rotate(45deg);
+            border-radius: 50% 50% 50% 0;
+            cursor: pointer;
+        }
+        
+        .pin::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            top: 6px;
+            left: 6px;
+        }
+        
+        .user-location {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: #48bb78;
+            border-radius: 50%;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.6rem;
+        }
+        
+        .sidebar {
+            transition: transform 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .search-container {
+                width: 80% !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="map-container">
+        <!-- Map Features (Labels, etc.) -->
+        <div class="country-label" style="top: 30%; left: 50%;">Europe</div>
+        <div class="country-label" style="top: 35%; left: 60%;">Germany</div>
+        <div class="country-label" style="top: 40%; left: 55%;">France</div>
+        <div class="country-label" style="top: 25%; left: 65%;">United Kingdom</div>
+        <div class="country-label" style="top: 45%; left: 45%;">Spain</div>
+        <div class="country-label" style="top: 50%; left: 65%;">Italy</div>
+        
+        <div class="ocean-label" style="top: 20%; left: 40%;">North Atlantic Ocean</div>
+        <div class="ocean-label" style="top: 30%; left: 70%;">North Sea</div>
+        <div class="ocean-label" style="top: 45%; left: 30%;">Mediterranean Sea</div>
+        
+        <!-- Pins -->
+        <div class="pin" style="top: 35%; left: 60%;" title="Berlin"></div>
+        <div class="pin" style="top: 40%; left: 55%;" title="Paris"></div>
+        <div class="pin" style="top: 45%; left: 45%;" title="Madrid"></div>
+        <div class="pin" style="top: 30%; left: 80%;" title="Oslo"></div>
+        
+        <!-- User Location -->
+        <div class="user-location" style="top: 38%; left: 58%;" title="Your location">
+            <i class="fas fa-check"></i>
+        </div>
+        
+        <!-- Top Navigation -->
+        <div class="absolute top-4 left-0 right-0 flex justify-center">
+            <div class="search-container relative w-1/3 min-w-[300px]">
+                <div class="bg-white rounded-full shadow-md flex items-center px-4 py-2">
+                    <i class="fas fa-search text-gray-400 mr-2"></i>
+                    <input type="text" placeholder="In Google Maps suchen" class="flex-grow outline-none text-gray-600">
+                    <button class="bg-blue-500 text-white rounded-full p-1 w-8 h-8 flex items-center justify-center">
+                        <i class="fas fa-route"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Top Right User Profile -->
+        <div class="absolute top-4 right-4 flex items-center">
+            <button class="text-gray-600 p-2 rounded-full hover:bg-gray-100 mr-2">
+                <i class="fas fa-th"></i>
+            </button>
+            <div class="w-8 h-8 bg-black rounded-full"></div>
+        </div>
+        
+        <!-- Left Sidebar -->
+        <div class="sidebar absolute top-20 left-4 bg-white rounded-lg shadow-md p-4 w-64 h-3/4 overflow-y-auto">
+            <div class="mb-6">
+                <h3 class="font-bold text-gray-700 mb-2">Gespeichert</h3>
+                <div class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-bookmark text-yellow-500 mr-3"></i>
+                    <span class="text-gray-600">Favoriten</span>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="font-bold text-gray-700 mb-2">Letzte</h3>
+                <div class="flex items-center p-2 rounded-lg hover:bg-gray-100">
+                    <i class="fas fa-history text-blue-500 mr-3"></i>
+                    <span class="text-gray-600">Zuletzt angesehen</span>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="font-bold text-gray-700 mb-2">Deine Listen</h3>
+                <div class="p-2 rounded-lg hover:bg-gray-100 mb-2">
+                    <div class="flex items-center">
+                        <i class="fas fa-list text-green-500 mr-3"></i>
+                        <span class="text-gray-600">Dortmund & Umgebung</span>
+                    </div>
+                    <div class="flex mt-2">
+                        <div class="w-16 h-16 bg-blue-200 rounded mr-2"></div>
+                        <div class="w-16 h-16 bg-green-200 rounded mr-2"></div>
+                        <div class="w-16 h-16 bg-yellow-200 rounded"></div>
+                    </div>
+                </div>
+                <div class="p-2 rounded-lg hover:bg-gray-100">
+                    <div class="flex items-center">
+                        <i class="fas fa-list text-purple-500 mr-3"></i>
+                        <span class="text-gray-600">Urlaub 2023</span>
+                    </div>
+                    <div class="flex mt-2">
+                        <div class="w-16 h-16 bg-red-200 rounded mr-2"></div>
+                        <div class="w-16 h-16 bg-indigo-200 rounded mr-2"></div>
+                        <div class="w-16 h-16 bg-pink-200 rounded"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Left Controls -->
+        <div class="absolute bottom-6 left-6">
+            <button class="bg-white bg-opacity-90 rounded-lg p-3 shadow-md hover:bg-gray-50 mb-2">
+                <i class="fas fa-globe text-gray-700"></i>
+            </button>
+            <div class="text-sm bg-black bg-opacity-70 text-white rounded px-2 py-1">
+               <span>App herunterladen</span>
+            </div>
+        </div>
+        
+        <!-- Bottom Right Controls -->
+        <div class="absolute bottom-6 right-6 flex flex-col items-end">
+            <!-- Accessibility Buttons -->
+            <div class="flex mb-2 space-x-2">
+                <button class="bg-white border border-gray-300 rounded-lg px-3 py-2 hover:bg-gray-50 relative group" title="Barrierefreiheit aktivieren">
+                    <i class="fas fa-wheelchair text-gray-700"></i>
+                    <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                        Barrierefreiheit aktivieren
+                    </div>
+                </button>
+                <button class="bg-white border border-gray-300 rounded-lg px-3 py-2 hover:bg-gray-50 relative group" title="Barriere melden">
+                    <i class="fas fa-exclamation-triangle text-gray-700"></i>
+                    <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                        Barriere melden
+                    </div>
+                </button>
+            </div>
+            <div class="bg-white rounded-lg shadow-md divide-y divide-gray-200 mb-2">
+                <button class="p-3 hover:bg-gray-50">
+                    <i class="fas fa-plus text-gray-600"></i>
+                </button>
+                <button class="p-3 hover:bg-gray-50">
+                    <i class="fas fa-minus text-gray-600"></i>
+                </button>
+            </div>
+            <button class="bg-white p-3 rounded-full shadow-md hover:bg-gray-50 mb-4">
+                <i class="fas fa-compass text-gray-700"></i>
+            </button>
+            <div class="bg-white bg-opacity-80 text-xs p-1 rounded mb-2">
+                <span>200 km</span>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="absolute bottom-0 left-0 right-0 flex justify-between px-4 py-2 text-xs bg-white bg-opacity-80">
+            <div>
+                <span class="font-bold">Google</span>
+                <span class="text-gray-600 ml-4">©2023</span>
+            </div>
+            <div>
+                <a href="#" class="text-blue-500 hover:underline mr-4">Nutzungsbedingungen</a>
+                <a href="#" class="text-blue-500 hover:underline">Datenschutzerklärung</a>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Button (hidden on desktop) -->
+        <button id="menuButton" class="md:hidden absolute top-6 left-4 p-2 rounded-full bg-white shadow-md">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('menuButton').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // Simple tooltip for pins
+        document.querySelectorAll('.pin').forEach(pin => {
+            const title = pin.getAttribute('title');
+            if (title) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'absolute bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap hidden';
+                tooltip.style.top = '-30px';
+                tooltip.style.left = '50%';
+                tooltip.style.transform = 'translateX(-50%)';
+                tooltip.textContent = title;
+                pin.appendChild(tooltip);
+                
+                pin.addEventListener('mouseenter', () => tooltip.classList.remove('hidden'));
+                pin.addEventListener('mouseleave', () => tooltip.classList.add('hidden'));
+            }
+        });
+    </script>
+</body>
+</html>
