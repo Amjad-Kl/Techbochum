@@ -10,10 +10,6 @@ SOURCE_DIR="C:\Users\Amjad\Desktop\MyGithubRepo (7)\SK2\website"
 
 # Definition der Stufen: "Ordnername:Tag:Commit-Titel"
 VERSIONS=(
-  "website_V3:v3.0:feat: Version 3 - Erweiterung der UI-Komponenten und Routing"
-  "website_V4:v4.0:feat: Version 4 - Interaktive Features und Daten-Handling"
-  "website_V5:v5.0:feat: Version 5 - Performance-Optimierung und Refactoring"
-  "website_V5.1:v5.0:feat: Version 5.1 - Performance-Optimierung und Refactoring"
   "website_V6:v6.0:feat: Version 6 - Vollständige Feature-Integration und Tests"
   "website_V6_1:v6.1:fix: Version 6.1 - Feinschliff, UI-Korrekturen und Bugfixes"
 )
@@ -82,7 +78,7 @@ for entry in "${VERSIONS[@]}"; do
   # 7. Push nach GitHub
   echo "[*] Pushe Branch und Tag '${TAG}' nach GitHub..."
   git push origin "$CURRENT_BRANCH"
-  git push origin "$TAG"
+  git push origin "$TAG" --force
 
   echo "[+] ${TAG} erfolgreich committet und gepusht!"
   echo ""
