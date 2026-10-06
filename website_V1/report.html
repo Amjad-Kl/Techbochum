@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hindernis melden – SenseMap</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>⚠️ Hindernis melden</h1>
+  </header>
+
+  <main class="form-container">
+    <form>
+      <label for="type">Typ des Hindernisses:</label>
+      <select id="type" required>
+        <option value="">Wählen...</option>
+        <option value="stufen">Stufen</option>
+        <option value="aufzug">Defekter Aufzug</option>
+        <option value="rampe">Fehlende Rampe</option>
+        <option value="enge">Enge Durchgänge</option>
+      </select>
+
+      <label for="description">Beschreibung:</label>
+      <textarea id="description" rows="4" placeholder="Zusätzliche Infos..."></textarea>
+
+      <button type="submit">Absenden</button>
+    </form>
+  </main>
+
+</body>
+</html>
