@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hindernis melden – Techbochum</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="images/logo.png" alt="Techbochum Logo" />
+      <span>Techbochum</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Karte</a></li>
+        <li><a href="report.html">Melden</a></li>
+        <li><a href="profile.html">Profil</a></li>
+      </ul>
+      <button id="user-menu-button"><i class="fas fa-user"></i></button>
+    </nav>
+    <form class="search-form">
+      <input type="text" placeholder="Suche nach Orten in Bochum..." />
+      <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+  </header>
+
+  <main class="report-page">
+    <h1>Hindernis melden</h1>
+    <div class="report-container">
+      <form id="report-form">
+        <!-- Foto hochladen -->
+        <div class="upload-section">
+          <label for="photo-upload">
+            <div class="upload-box">
+              <i class="fas fa-upload"></i>
+              <p>Klicken zum Hochladen oder Bild ziehen</p>
+            </div>
+          </label>
+          <input type="file" id="photo-upload" style="display: none;" />
+        </div>
+
+        <!-- Hindernistyp -->
+        <div class="radio-group">
+          <h3>Art des Hindernisses</h3>
+          <div class="radio-option">
+            <input type="radio" id="stairs" name="obstacle-type" value="stairs" checked />
+            <label for="stairs">Treppe / Stufen</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="broken-elevator" name="obstacle-type" value="broken-elevator" />
+            <label for="broken-elevator">Defekter Aufzug</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="missing-ramp" name="obstacle-type" value="missing-ramp" />
+            <label for="missing-ramp">Fehlende Rampe</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="other" name="obstacle-type" value="other" />
+            <label for="other">Sonstiges</label>
+          </div>
+        </div>
+
+        <!-- Beschreibung -->
+        <div class="description-section">
+          <label for="description">Beschreibung</label>
+          <textarea id="description" placeholder="Beschreiben Sie das Hindernis genauer..."></textarea>
+        </div>
+
+        <!-- Standort -->
+        <div class="location-section">
+          <label for="map">Standort</label>
+          <div id="map" class="map-container"></div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="primary-button">Hindernis melden</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <nav>
+      <a href="index.html"><i class="fas fa-map-marked-alt"></i> Karte</a>
+      <a href="report.html"><i class="fas fa-exclamation-triangle"></i> Melden</a>
+      <a href="profile.html"><i class="fas fa-user"></i> Profil</a>
+    </nav>
+  </footer>
+
+  
+  <script src="js/script.js"></script>
+</body>
+</html>
