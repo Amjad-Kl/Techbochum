@@ -1,73 +1,63 @@
-# Welcome to your Lovable project
+# TechBochum - Barrierefreiheits-App
 
-## Project info
+Eine Crowd-basierte Lösung für inklusive Navigation & Ortsbewertung in Bochum.
 
-**URL**: https://lovable.dev/projects/c0daa290-25f5-45b7-a077-50aaad5c9dbc
+## 🎯 Funktionen
 
-## How can I edit this code?
+- **Hindernisse melden**: Stufen, defekte Aufzüge, enge Durchgänge etc.
+- **Barrierefreie Navigation**: Routenplanung mit Hindernisvermeidung
+- **POI-Bewertung**: Bewertung von Orten auf Barrierefreiheit
+- **Community-basiert**: Nutzer:innen bestätigen/aktualisieren Einträge
 
-There are several ways of editing your application.
+## 🎨 Design
 
-**Use Lovable**
+- **Primärfarbe**: Blau (#1A73E8)
+- **Sekundärfarben**: 
+  - Grün (#34A853) für barrierefreie Orte
+  - Rot (#EA4335) für Hindernisse
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c0daa290-25f5-45b7-a077-50aaad5c9dbc) and start prompting.
+## 🚀 Installation
 
-Changes made via Lovable will be committed automatically to this repo.
+1. Stelle sicher, dass Node.js und npm installiert sind
+2. Klone das Repository:
+   ```bash
+   git clone [repository-url]
+   ```
+3. Installiere die Abhängigkeiten:
+   ```bash
+   npm install
+   ```
+4. Starte die Entwicklungsumgebung:
+   ```bash
+   npm start
+   ```
 
-**Use your preferred IDE**
+## 📱 App starten
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+### Android
+```bash
+npm run android
 ```
 
-**Edit a file directly in GitHub**
+### iOS
+```bash
+npm run ios
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🔧 Technologien
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
+- React Native
 - TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- React Navigation
+- Google Maps / OpenStreetMap
 
-## How can I deploy this project?
+## 📝 Lizenz
 
-Simply open [Lovable](https://lovable.dev/projects/c0daa290-25f5-45b7-a077-50aaad5c9dbc) and click on Share -> Publish.
+MIT
 
-## Can I connect a custom domain to my Lovable project?
+## 👥 Zielgruppe
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Rollstuhlfahrer:innen
+- Sehbehinderte & blinde Menschen
+- Ältere Menschen mit Mobilitätseinschränkungen
+- Familien mit Kinderwagen 
