@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StadtBarrierefrei – Interaktive Karte für Bochum & Ruhrgebiet</title>
+    <meta name="description" content="Barrierefreie Orte, Straßenbaustellen und gemeldete Mobilitätshindernisse in Bochum und Umgebung.">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Projekt Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="app-layout">
+        <!-- Karte -->
+        <main id="map" role="application" aria-label="Interaktive Karte von Bochum"></main>
+
+        <!-- Obere Navigationsleiste -->
+        <header class="top-nav" role="banner">
+            <div class="brand-badge">
+                <i class="fas fa-wheelchair-move brand-icon" aria-hidden="true"></i>
+                <span>StadtBarrierefrei</span>
+                <span class="brand-tag">Bochum</span>
+            </div>
+
+            <!-- Suchfeld mit Autovervollständigung -->
+            <div class="search-wrapper" role="search">
+                <div class="search-box">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="text"
+                           id="global-search-input"
+                           class="search-input"
+                           placeholder="Ort oder Adresse in Bochum suchen..."
+                           aria-label="Ort oder Adresse suchen"
+                           autocomplete="off">
+                    <button class="search-clear-btn" id="btn-clear-search" aria-label="Sucheingabe löschen">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="search-dropdown" id="search-dropdown" role="listbox" aria-label="Suchergebnisse"></div>
+            </div>
+
+            <!-- Aktionsknöpfe -->
+            <div class="nav-actions">
+                <button class="btn-report" id="btn-open-report" aria-label="Neue Barriere melden">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                    <span>Barriere melden</span>
+                </button>
+                <button class="btn-icon" id="btn-locate-me" title="Meinen Standort anzeigen" aria-label="Meinen aktuellen Standort auf der Karte anzeigen">
+                    <i class="fas fa-location-crosshairs" aria-hidden="true"></i>
+                </button>
+                <button class="btn-icon" id="btn-open-a11y" title="Barrierefreiheit & Anzeige" aria-label="Barrierefreiheit und Anzeigeeinstellungen öffnen">
+                    <i class="fas fa-universal-access" aria-hidden="true"></i>
+                </button>
+                <button class="btn-icon" id="btn-toggle-menu" title="Menü und Übersicht öffnen" aria-label="Übersicht und Ortsliste öffnen">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Seitenleiste (Drawer) -->
+        <aside class="sidebar" id="sidebar" role="complementary" aria-label="Detailansicht und Listen">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">Übersicht & Navigation</h2>
+                <button class="sidebar-close-btn" id="btn-close-sidebar" aria-label="Seitenleiste schließen">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Tab Leiste -->
+            <nav class="sidebar-tabs" role="tablist">
+                <button class="tab-btn active" data-tab="locations" role="tab" aria-selected="true" id="tab-btn-locations">
+                    <i class="fas fa-building" aria-hidden="true"></i>
+                    <span>Orte</span>
+                    <span class="tab-badge" id="badge-locations-count">0</span>
+                </button>
+                <button class="tab-btn" data-tab="baustellen" role="tab" aria-selected="false" id="tab-btn-baustellen">
+                    <i class="fas fa-person-digging" aria-hidden="true"></i>
+                    <span>Baustellen</span>
+                    <span class="tab-badge" id="badge-baustellen-count">0</span>
+                </button>
+                <button class="tab-btn" data-tab="reports" role="tab" aria-selected="false" id="tab-btn-reports">
+                    <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
+                    <span>Meldungen</span>
+                    <span class="tab-badge" id="badge-reports-count">0</span>
+                </button>
+                <button class="tab-btn" data-tab="info" role="tab" aria-selected="false" id="tab-btn-info">
+                    <i class="fas fa-circle-info" aria-hidden="true"></i>
+                    <span>Info</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-content">
+                <!-- Tab 1: Orte -->
+                <section class="tab-panel active" id="tab-locations" role="tabpanel" aria-labelledby="tab-btn-locations">
+                    <div class="filter-pills" id="locations-filters">
+                        <button class="filter-pill active" data-filter="all">Alle</button>
+                        <button class="filter-pill" data-filter="ÖPNV">Bahnhöfe</button>
+                        <button class="filter-pill" data-filter="Kultur">Kultur</button>
+                        <button class="filter-pill" data-filter="Bildung">Bildung</button>
+                        <button class="filter-pill" data-filter="stufenfrei">Stufenfrei</button>
+                        <button class="filter-pill" data-filter="aufzug">Aufzug</button>
+                    </div>
+                    <div class="items-list" id="locations-items-list">
+                        <!-- Wird per JS befüllt -->
+                    </div>
+                </section>
+
+                <!-- Tab 2: Baustellen -->
+                <section class="tab-panel" id="tab-baustellen" role="tabpanel" aria-labelledby="tab-btn-baustellen">
+                    <div style="margin-bottom: 12px;">
+                        <input type="text"
+                               id="input-baustellen-search"
+                               class="form-input"
+                               placeholder="Baustellen nach Straße durchsuchen..."
+                               aria-label="Baustellen durchsuchen">
+                    </div>
+                    <div class="items-list" id="baustellen-items-list">
+                        <!-- Wird per JS befüllt -->
+                    </div>
+                </section>
+
+                <!-- Tab 3: Bürgermeldungen -->
+                <section class="tab-panel" id="tab-reports" role="tabpanel" aria-labelledby="tab-btn-reports">
+                    <div class="filter-pills" id="reports-filters">
+                        <button class="filter-pill active" data-filter="all">Alle</button>
+                        <button class="filter-pill" data-filter="stairs">Treppen/Stufen</button>
+                        <button class="filter-pill" data-filter="elevator">Aufzüge</button>
+                        <button class="filter-pill" data-filter="narrow">Engstellen</button>
+                        <button class="filter-pill" data-filter="verified">Bestätigt</button>
+                    </div>
+                    <div class="items-list" id="reports-items-list">
+                        <!-- Wird per JS befüllt -->
+                    </div>
+                </section>
+
+                <!-- Tab 4: Projektinformationen -->
+                <section class="tab-panel" id="tab-info" role="tabpanel" aria-labelledby="tab-btn-info">
+                    <div class="info-section">
+                        <h3>Über dieses Bürgerprojekt</h3>
+                        <p>
+                            <strong>StadtBarrierefrei</strong> ist eine offene Plattform für die Stadt Bochum und das Ruhrgebiet.
+                            Ziel ist es, Bürgerinnen und Bürgern mit Mobilitätseinschränkungen, Rollstühlen oder Kinderwagen eine
+                            transparente und verlässliche Übersicht über barrierefreie Orte, aktuelle Baustellenbehinderungen
+                            und gemeldete Hindernisse bereitzustellen.
+                        </p>
+                    </div>
+
+                    <div class="info-stat-box">
+                        <div class="stat-card">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Open Data</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">WCAG 2.1</div>
+                            <div class="stat-label">Konformität</div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h3>Datenquellen & Lizenzen</h3>
+                        <p>
+                            • <strong>Baustellen:</strong> Offene Geodaten der Stadt Bochum (Straßen- und Baustellenkataster).<br>
+                            • <strong>Kartenbasis:</strong> © OpenStreetMap-Mitwirkende (ODbL).<br>
+                            • <strong>Geokodierung:</strong> Photon / Komoot OpenStreetMap Geocoder.<br>
+                            • <strong>Community-Meldungen:</strong> Direkte Erfassung durch engagierte Bürgerinnen und Bürger.
+                        </p>
+                    </div>
+
+                    <div class="info-section">
+                        <h3>Mitmachen</h3>
+                        <p>
+                            Entdecken Sie ein Hindernis im Stadtraum? Nutzen Sie den Knopf <em>„Barriere melden“</em> oder klicken Sie
+                            direkt auf die Karte, um den Ort zu markieren.
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </aside>
+
+        <!-- Dialog: Barriere melden -->
+        <div class="modal-backdrop" id="modal-report" role="dialog" aria-modal="true" aria-labelledby="modal-report-title">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h2 id="modal-report-title"><i class="fas fa-triangle-exclamation" style="color: var(--color-danger); margin-right: 8px;"></i> Barriere im Stadtraum melden</h2>
+                    <button class="sidebar-close-btn" data-close-modal="modal-report" aria-label="Dialog schließen">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="form-report">
+                    <div class="modal-body">
+                        <div class="form-field">
+                            <label class="form-label" for="report-location">Ort / Straße *</label>
+                            <div class="input-with-button">
+                                <input type="text"
+                                       class="form-input"
+                                       id="report-location"
+                                       placeholder="z. B. Huestr. 12 oder U-Bahnhof Rathaus"
+                                       required>
+                                <button type="button" class="btn-inline" id="btn-get-current-location">
+                                    <i class="fas fa-location-crosshairs"></i> Mein Standort
+                                </button>
+                            </div>
+                            <div class="form-helper">Sie können auch direkt auf die Karte klicken, um Koordinaten festzulegen.</div>
+                        </div>
+
+                        <!-- Versteckte Koordinaten -->
+                        <input type="hidden" id="report-lat">
+                        <input type="hidden" id="report-lng">
+
+                        <div class="form-field">
+                            <label class="form-label" for="report-barrier-type">Art der Barriere *</label>
+                            <select class="form-select" id="report-barrier-type" required>
+                                <option value="" disabled selected>Bitte auswählen...</option>
+                                <option value="stairs">Treppe / Stufen ohne Rampe</option>
+                                <option value="elevator">Aufzug defekt oder nicht vorhanden</option>
+                                <option value="narrow">Engstelle (z. B. Bürgersteig zu schmal)</option>
+                                <option value="doors">Schwere oder unzugängliche Türen</option>
+                                <option value="surface">Unebener Belag / Kopfsteinpflaster / Schlagloch</option>
+                                <option value="construction">Baustellenhindernis / Sperrung</option>
+                                <option value="other">Sonstige Barriere</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label" for="report-severity">Auswirkung / Schweregrad</label>
+                            <select class="form-select" id="report-severity">
+                                <option value="medium">Mittel (erschwert die Durchfahrt/Zugang)</option>
+                                <option value="high">Hoch (vollständig unpassierbar für Rollstuhl/Gehhilfe)</option>
+                                <option value="low">Gering (leichte Beeinträchtigung)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label" for="report-description">Genaue Beschreibung *</label>
+                            <textarea class="form-textarea"
+                                      id="report-description"
+                                      rows="3"
+                                      placeholder="Beschreiben Sie das Hindernis kurz (z. B. Höhe der Stufen, Umleitungsmöglichkeit)..."
+                                      required></textarea>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-label">Foto anhängen (optional)</label>
+                            <input type="file" id="report-photo-input" accept="image/*" style="display: none;">
+                            <div class="dropzone" id="report-dropzone">
+                                <i class="fas fa-camera"></i>
+                                <p>Foto auswählen oder hier ablegen</p>
+                            </div>
+                            <div class="photo-preview-container" id="photo-preview-container">
+                                <img src="" alt="Vorschau" id="photo-preview-img" class="photo-preview-img">
+                                <button type="button" class="photo-remove-btn" id="btn-remove-photo" title="Foto entfernen">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-close-modal="modal-report">Abbrechen</button>
+                        <button type="submit" class="btn btn-primary">Meldung einreichen</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dialog: Barrierefreiheit & Anzeigeeinstellungen -->
+        <div class="modal-backdrop" id="modal-accessibility" role="dialog" aria-modal="true" aria-labelledby="modal-a11y-title">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h2 id="modal-a11y-title"><i class="fas fa-universal-access" style="color: var(--color-primary); margin-right: 8px;"></i> Barrierefreiheit & Ansicht</h2>
+                    <button class="sidebar-close-btn" data-close-modal="modal-accessibility" aria-label="Dialog schließen">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="accessibility-switch-list">
+                        <!-- Hoher Kontrast -->
+                        <div class="switch-item">
+                            <div class="switch-info">
+                                <i class="fas fa-circle-half-stroke" aria-hidden="true"></i>
+                                <div>
+                                    <div class="switch-title">Hoher Kontrast</div>
+                                    <div class="switch-sub">Verstärkte Farbkontraste für bessere Lesbarkeit</div>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle-high-contrast" aria-label="Hohen Kontrast ein- oder ausschalten">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Große Schrift -->
+                        <div class="switch-item">
+                            <div class="switch-info">
+                                <i class="fas fa-text-height" aria-hidden="true"></i>
+                                <div>
+                                    <div class="switch-title">Vergrößerte Schrift</div>
+                                    <div class="switch-sub">Skaliert alle Textinhalte und Beschriftungen</div>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle-large-text" aria-label="Große Schrift ein- oder ausschalten">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Dunkelmodus -->
+                        <div class="switch-item">
+                            <div class="switch-info">
+                                <i class="fas fa-moon" aria-hidden="true"></i>
+                                <div>
+                                    <div class="switch-title">Dunkles Design (Dark Mode)</div>
+                                    <div class="switch-sub">Blendfreie Darstellung bei schlechten Lichtverhältnissen</div>
+                                </div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle-dark-mode" aria-label="Dunkles Design ein- oder ausschalten">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Farbschwäche -->
+                        <div class="switch-item">
+                            <div class="switch-info">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                                <div>
+                                    <div class="switch-title">Farbfilter für Sehschwächen</div>
+                                    <div class="switch-sub">Farbmatrix-Korrektur für Rot-Grün-Schwächen</div>
+                                </div>
+                            </div>
+                            <select class="form-select" id="select-colorblind" style="width: 140px; padding: 4px 8px; font-size: 0.82rem;" aria-label="Farbfilter wählen">
+                                <option value="none">Standard</option>
+                                <option value="protanopia">Protanopie</option>
+                                <option value="deuteranopia">Deuteranopie</option>
+                            </select>
+                        </div>
+
+                        <!-- Vorlesen (TTS) -->
+                        <div class="switch-item">
+                            <div class="switch-info">
+                                <i class="fas fa-volume-high" aria-hidden="true"></i>
+                                <div>
+                                    <div class="switch-title">Sprachausgabe (Text-to-Speech)</div>
+                                    <div class="switch-sub">Liest Beschreibungen und Meldungen vor</div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary" id="btn-tts-read">
+                                <i class="fas fa-play" style="margin-right: 4px;"></i>
+                                <span class="btn-label">Vorlesen starten</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-close-modal="modal-accessibility">Übernehmen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SVG-Farbfilter-Definitionen für Sehschwächen -->
+    <svg id="svg-colorblind-filters" style="position: absolute; width: 0; height: 0; pointer-events: none;" aria-hidden="true">
+        <filter id="filter-protanopia">
+            <feColorMatrix type="matrix" values="0.567 0.433 0 0 0 0.558 0.442 0 0 0 0 0.242 0.758 0 0 0 0 0 1 0" />
+        </filter>
+        <filter id="filter-deuteranopia">
+            <feColorMatrix type="matrix" values="0.625 0.375 0 0 0 0.7 0.3 0 0 0 0 0.3 0.7 0 0 0 0 0 1 0" />
+        </filter>
+    </svg>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <!-- Modulare Anwendungs-Skripte -->
+    <script src="js/accessibility.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+[
+  {
+    "_id": "rep_1791229359928_rrfyc",
+    "location": "Ausgewählter Ort (51.4798, 7.2087)",
+    "barrierType": "elevator",
+    "description": "GFHF",
+    "severity": "high",
+    "status": "pending",
+    "lat": 51.47978,
+    "lng": 7.20871,
+    "photo": null,
+    "createdAt": "2026-10-05T19:42:39.927Z"
+  },
+  {
+    "_id": "rep_1791229268120_r9jel",
+    "location": "Innsbruckstraße 71",
+    "barrierType": "narrow",
+    "description": "FFTF",
+    "severity": "high",
+    "status": "pending",
+    "lat": 51.48919669822713,
+    "lng": 7.211995591545826,
+    "photo": null,
+    "createdAt": "2026-10-05T19:41:08.119Z"
+  },
+  {
+    "_id": "rep_1791229001715_pb74c",
+    "location": "Viktoriastra�e 10, Bochum",
+    "barrierType": "stairs",
+    "description": "Test-Barriere vor dem B�rgerb�ro",
+    "severity": "high",
+    "status": "pending",
+    "lat": 51.481,
+    "lng": 7.217,
+    "photo": null,
+    "createdAt": "2026-10-05T19:36:41.715Z"
+  },
+  {
+    "_id": "sample-1",
+    "location": "Kortumstraße 45, Bochum",
+    "barrierType": "stairs",
+    "severity": "high",
+    "description": "Drei Stufen am Haupteingang ohne rollstuhlgerechte Rampe.",
+    "status": "pending",
+    "lat": 51.4802,
+    "lng": 7.2188,
+    "photo": null,
+    "createdAt": "2026-10-05T19:36:41.494Z"
+  },
+  {
+    "_id": "sample-2",
+    "location": "U-Bahn Rathaus Süd, Bochum",
+    "barrierType": "elevator",
+    "severity": "high",
+    "description": "Aufzug zu Gleis 2 defekt, Techniker bereits verständigt.",
+    "status": "verified",
+    "lat": 51.4828,
+    "lng": 7.2152,
+    "photo": null,
+    "createdAt": "2026-10-04T19:36:41.495Z"
+  }
+]

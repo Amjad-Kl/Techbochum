@@ -1,0 +1,92 @@
+[
+  {
+    "id": "loc-1",
+    "name": "Hauptbahnhof Bochum",
+    "lat": 51.4783,
+    "lng": 7.2228,
+    "type": "accessible",
+    "category": "Bahnhof & ÖPNV",
+    "description": "Barrierefreier Zugang zu allen Bahnsteigen über Aufzüge, taktiles Blindenleitsystem und automatisierte Türen vorhanden.",
+    "features": ["Aufzüge", "Stufenfreier Zugang", "Blindenleitsystem", "Barrierefreies WC"]
+  },
+  {
+    "id": "loc-2",
+    "name": "Deutsches Bergbau-Museum Bochum",
+    "lat": 51.4889,
+    "lng": 7.2163,
+    "type": "accessible",
+    "category": "Kultur & Freizeit",
+    "description": "Museumsgebäude und Ausstellung weitgehend stufenlos zugänglich. Anschauungsbergwerk über barrierefreien Förderkorb-Simulator erlebbar.",
+    "features": ["Aufzüge", "Rollstuhlgerecht", "Behinderten-Parkplätze", "Barrierefreies WC"]
+  },
+  {
+    "id": "loc-3",
+    "name": "Ruhr-Universität Bochum (Universitätsbibliothek)",
+    "lat": 51.4465,
+    "lng": 7.2628,
+    "type": "accessible",
+    "category": "Bildung & Wissenschaft",
+    "description": "Zentraler Zugang mit Automatiktüren, Aufzugsanlagen auf alle Ebenen sowie höhenverstellbare Arbeitsplätze vorhanden.",
+    "features": ["Automatiktüren", "Aufzüge", "Stufenfrei", "Inklusive Arbeitsplätze"]
+  },
+  {
+    "id": "loc-4",
+    "name": "Hochschule Bochum (Campus Lennershof)",
+    "lat": 51.4537,
+    "lng": 7.2507,
+    "type": "accessible",
+    "category": "Bildung & Wissenschaft",
+    "description": "Hauptgebäude barrierefrei über Rampen erschlossen, rollstuhlgerechte Hörsaalplätze und Sanitäranlagen vorhanden.",
+    "features": ["Rampen", "Aufzüge", "Stufenfrei"]
+  },
+  {
+    "id": "loc-5",
+    "name": "Jahrhunderthalle Bochum",
+    "lat": 51.4812,
+    "lng": 7.1997,
+    "type": "accessible",
+    "category": "Kultur & Freizeit",
+    "description": "Veranstaltungshalle ebenerdig zugänglich, Westpark-Gelände mit befestigten Wegen, vereinzelt Steigungen im Außenbereich.",
+    "features": ["Ebenerdiger Eingang", "Barrierefreies WC", "Befestigte Wege"]
+  },
+  {
+    "id": "loc-6",
+    "name": "Schauspielhaus Bochum",
+    "lat": 51.4729,
+    "lng": 7.2185,
+    "type": "accessible",
+    "category": "Kultur & Freizeit",
+    "description": "Zugang zum Großen Haus barrierefrei über Rampe (Königsallee), Plätze für Rollstuhlnutzer im Parkett, Induktionsschleife für Hörgeschädigte.",
+    "features": ["Höranlage (Induktion)", "Rollstuhlplätze", "Rampe"]
+  },
+  {
+    "id": "loc-7",
+    "name": "Tierpark und Fossilium Bochum",
+    "lat": 51.4907,
+    "lng": 7.2284,
+    "type": "partially",
+    "category": "Freizeit & Natur",
+    "description": "Hauptwege befestigt und für Rollstühle geeignet. Aquarienbereich stufenlos. Einzelne Steigungen im Park erfordern Begleitperson.",
+    "features": ["Rollstuhlgerecht (teilweise)", "Barrierefreies WC"]
+  },
+  {
+    "id": "loc-8",
+    "name": "Hauptbahnhof Dortmund",
+    "lat": 51.5176,
+    "lng": 7.4593,
+    "type": "accessible",
+    "category": "Bahnhof & ÖPNV",
+    "description": "Modernisierte Bahnsteigzugänge mit Aufzügen und taktiler Wegführung. Mobilitätsservice vor Ort verfügbar.",
+    "features": ["Aufzüge", "Blindenleitsystem", "Mobilitätsservice", "Barrierefreies WC"]
+  },
+  {
+    "id": "loc-9",
+    "name": "Dortmunder U-Turm",
+    "lat": 51.5149,
+    "lng": 7.4638,
+    "type": "partially",
+    "category": "Kultur & Freizeit",
+    "description": "Aufzüge erschließen die Etagen. Vorplatz und Nebeneingänge weisen stellenweise Stufen auf, barrierefreier Nebeneingang ausgeschildert.",
+    "features": ["Aufzüge", "Teilweise stufenfrei"]
+  }
+]
